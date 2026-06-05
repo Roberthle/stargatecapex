@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.env
+.venv
+venv/
+*.egg-info/
+
+# Logs
+logs/
+*.log
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Scrapers (not needed for web deployment)
+scrapers/
+
+# Seed script (not needed for web deployment — DB is committed)
+seed_from_existing.py
+
+# Development
+*.sqlite-wal
+*.sqlite-shm

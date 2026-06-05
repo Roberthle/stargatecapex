@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Stargate Capex Intelligence Terminal — UCC-1 equipment financing and MCA leads for contractors, suppliers, and vendors active in the $500B Project Stargate AI data center buildout across Texas, Michigan, Wisconsin, Ohio, and New Mexico." />
+  <meta name="keywords" content="Stargate Capex, Project Stargate leads, AI data center contractors, UCC-1 equipment leads, MCA leads, OpenAI Abilene, Oracle data center, equipment financing leads, B2B sales intelligence" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="http://localhost:5052/" />
+
+  <!-- OG -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Stargate Capex — AI Infrastructure UCC Lead Terminal" />
+  <meta property="og:description" content="High-intent equipment loan and MCA leads for the $500B Project Stargate AI buildout corridor." />
+  <meta property="og:image"       content="/hero.jpg" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Stargate Capex — AI Infrastructure UCC Lead Terminal" />
+  <meta name="twitter:description" content="UCC-1 equipment and MCA leads near Abilene TX · Saline MI · Port Washington WI · Columbus OH · Albuquerque NM." />
+  <meta name="twitter:image"       content="/hero.jpg" />
+
+  <title>Stargate Capex — AI Infrastructure UCC Lead Terminal</title>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Stargate Capex Intelligence Terminal",
+    "applicationCategory": "BusinessApplication",
+    "description": "UCC-1 equipment financing and MCA lead terminal for the Project Stargate AI infrastructure buildout. Tracks contractors, fabricators, and vendors across TX, MI, WI, OH, NM Stargate nodes.",
+    "offers": { "@type": "Offer", "priceCurrency": "USD", "price": "0" }
+  }
+  </script>
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin />
+  <link href="https://fonts.cdnfonts.com/css/d-din" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/terminal.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       NAV
+  ══════════════════════════════════════════════ -->
+  <nav class="sg-nav" id="main-nav" role="navigation" aria-label="Main navigation">
+    <a class="sg-logo" href="/" id="logo-link" aria-label="Stargate Capex Terminal">
+      <div class="sg-logo-mark"></div>
+      <span class="sg-logo-text">STARGATE</span>
+      <span class="sg-logo-divider"></span>
+      <span class="sg-logo-capex">CAPEX</span>
+    </a>
+    <div class="sg-nav-right">
+      <span class="sg-nav-tag" id="nav-timestamp">—</span>
+      <div class="sg-live" aria-live="polite">
+        <div class="sg-live-dot" id="nav-live-dot"></div>
+        <span>Live Data</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════
+       PIPELINE BANNER
+  ══════════════════════════════════════════════ -->
+  <div class="sg-pipeline" id="pipeline-banner" role="status" aria-live="polite" style="opacity:0;transition:opacity 0.3s">
+    <span class="sg-pipeline-label" id="pipeline-label">Initializing</span>
+    <div class="sg-pipeline-track" aria-hidden="true">
+      <div class="sg-pipeline-fill" id="pipeline-fill"></div>
+    </div>
+    <span class="sg-pipeline-pct" id="pipeline-pct">0%</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════ -->
+  <section class="sg-hero" id="hero" aria-label="Stargate Capex Hero">
+    <div class="sg-hero-bg" aria-hidden="true"></div>
+    <div class="sg-hero-overlay" aria-hidden="true"></div>
+
+    <div class="sg-hero-grid">
+      <div class="sg-hero-content">
+        <span class="sg-hero-eyebrow">Project Stargate — UCC Equipment & MCA Leads</span>
+        <h1 class="sg-hero-title">
+          Stargate <span>CapEx</span><br />Intelligence Terminal
+        </h1>
+        <p class="sg-hero-sub">
+          The definitive <strong>UCC-1 lead database</strong> for the <strong>$500B Project Stargate</strong> AI infrastructure corridor.
+          Identify contractors, fabricators, power vendors, and equipment operators
+          whose financing is maturing now — scored and ranked by proximity to active
+          <strong>Stargate nodes</strong> across Abilene TX, Saline MI, Port Washington WI, Columbus OH, and Albuquerque NM.
+        </p>
+        <div class="sg-hero-btns">
+          <button class="sg-btn sg-btn-primary" onclick="document.getElementById('data-section').scrollIntoView({behavior:'smooth'})" id="open-terminal-btn">
+            ⚡ Open Terminal
+          </button>
+          <button class="sg-btn sg-btn-outline" onclick="document.getElementById('data-section').scrollIntoView({behavior:'smooth'})" id="view-leads-btn">
+            📊 View Leads
+          </button>
+        </div>
+      </div>
+
+      <!-- Node status card -->
+      <div class="sg-hero-card">
+        <div class="sg-hero-card-title">Stargate Node Status</div>
+        <div class="sg-node-list" id="hero-node-list"></div>
+      </div>
+    </div>
+
+    <div class="sg-scroll-indicator" onclick="document.getElementById('data-section').scrollIntoView({behavior:'smooth'})" aria-hidden="true">
+      <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><polyline points="2,4 7,10 12,4"/></svg>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       DATA SECTION
+  ══════════════════════════════════════════════ -->
+  <div id="data-section">
+
+    <!-- Stats Strip -->
+    <div class="sg-stats" role="region" aria-label="Lead statistics">
+      <div class="sg-stat">
+        <div class="sg-stat-value cyan" id="stat-total">—</div>
+        <div class="sg-stat-label">Stargate Leads</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value" id="stat-priority" style="color:var(--gold)">—</div>
+        <div class="sg-stat-label">Priority — Score 85+</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value cyan" id="stat-hot">—</div>
+        <div class="sg-stat-label">Hot — Score 65+</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value" id="stat-monitor" style="color:var(--white-60)">—</div>
+        <div class="sg-stat-label">Monitor — Score 40+</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value cyan" id="stat-equipment">—</div>
+        <div class="sg-stat-label">Equipment Liens</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value" id="stat-mca" style="color:var(--gold)">—</div>
+        <div class="sg-stat-label">MCA / Blanket</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="sg-controls" role="search" aria-label="Filter leads">
+      <div class="sg-ctrl-group">
+        <div class="sg-slider-group">
+          <span class="sg-slider-label">Min Score</span>
+          <input type="range" id="ctrl-min-score" class="sg-slider" min="0" max="100" value="0" aria-label="Minimum propensity score" />
+          <span class="sg-slider-val" id="ctrl-score-display">0</span>
+        </div>
+        <select id="ctrl-tier"  class="sg-select" aria-label="Filter by tier">
+          <option value="">All Tiers</option>
+          <option value="priority">Priority (85+)</option>
+          <option value="hot">Hot (65+)</option>
+          <option value="monitor">Monitor (40+)</option>
+          <option value="low">Low (&lt;40)</option>
+        </select>
+        <select id="ctrl-node"  class="sg-select" aria-label="Filter by Stargate node">
+          <option value="">All Nodes</option>
+        </select>
+        <select id="ctrl-state" class="sg-select" aria-label="Filter by state">
+          <option value="">All States</option>
+        </select>
+        <select id="ctrl-lien"  class="sg-select" aria-label="Filter by lien type">
+          <option value="">All Types</option>
+          <option value="equipment">Equipment Liens</option>
+          <option value="blanket">MCA / Blanket</option>
+        </select>
+        <input type="search" id="ctrl-search" class="sg-input" placeholder="Search company name…" aria-label="Search by company" autocomplete="off" spellcheck="false" />
+      </div>
+      <div>
+        <button id="btn-refresh" class="sg-btn sg-btn-outline" type="button">&#x21BA;&nbsp; Refresh</button>
+      </div>
+    </div>
+
+    <!-- Results Bar -->
+    <div class="sg-results-bar">
+      <span class="sg-results-count" aria-live="polite">
+        Showing <span id="results-n">—</span> leads
+      </span>
+      <span class="sg-sort-info" id="sort-info">Sorted by Score ↓</span>
+    </div>
+
+    <!-- Table -->
+    <main role="main">
+      <div class="sg-table-wrap">
+        <table id="leads-table" aria-label="Stargate Capex lead intelligence">
+          <colgroup>
+            <col style="width:80px" />   <!-- score -->
+            <col style="width:260px" />  <!-- company -->
+            <col style="width:110px" />  <!-- type -->
+            <col style="width:150px" />  <!-- lender -->
+            <col style="width:60px" />   <!-- age -->
+            <col style="width:110px" />  <!-- lapse -->
+            <col style="width:110px" />  <!-- volume -->
+            <col style="width:160px" />  <!-- node -->
+            <col />                      <!-- match -->
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="sortable sorted" data-col="propensity_score" data-dir="desc" scope="col">Score</th>
+              <th class="sortable" data-col="company_name"       data-dir="asc"  scope="col">Company</th>
+              <th scope="col">Type</th>
+              <th scope="col">Secured Party</th>
+              <th class="sortable" data-col="filing_age_months"  data-dir="desc" scope="col">Age Mo</th>
+              <th class="sortable" data-col="days_to_lapse"      data-dir="asc"  scope="col">Lapse</th>
+              <th scope="col">Est. Volume</th>
+              <th class="sortable" data-col="node_dist_km"       data-dir="asc"  scope="col">Nearest Node</th>
+              <th scope="col">Match</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="margin-top:60px;padding:32px 0;border-top:1px solid var(--border);text-align:center">
+      <p style="font-size:10px;color:var(--white-30);letter-spacing:0.1em;line-height:1.8">
+        STARGATE CAPEX INTELLIGENCE TERMINAL &nbsp;·&nbsp;
+        UCC-1 DATA SOURCED FROM STATE SOS FILINGS &nbsp;·&nbsp;
+        SCORED DAILY AGAINST STARGATE NODE PROXIMITY<br />
+        Abilene TX &nbsp;·&nbsp; Saline MI &nbsp;·&nbsp; Port Washington WI &nbsp;·&nbsp; Columbus OH &nbsp;·&nbsp; Albuquerque NM
+      </p>
+    </footer>
+
+  </div><!-- end data-section -->
+
+  <script src="/js/terminal.js"></script>
+</body>
+</html>
