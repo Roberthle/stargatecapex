@@ -898,3 +898,27 @@ td { padding: 11px 14px; vertical-align: middle; }
   text-transform: uppercase;
   padding: 0 8px;
 }
+
+/* ── Copy & Selection Protections ─────────────────────────────────────────── */
+body, html {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+input, textarea, select {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* ── Print/PDF Extraction Protection ──────────────────────────────────────── */
+@media print {
+  body, html, #data-section {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+}

@@ -422,3 +422,99 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.1 });
   if (hero) observer.observe(hero);
 });
+
+// ── Copy, Selection & Right-Click Security Protections ────────────────────────
+(function () {
+  // 1. Domain Authorization Lock (Anti-Cloning)
+  const authorizedDomains = ['stargatecapex.com', 'www.stargatecapex.com', 'localhost', '127.0.0.1'];
+  const hostname = window.location.hostname.toLowerCase();
+  const isAuthorized = authorizedDomains.some(domain => hostname === domain || hostname.endsWith('.' + domain));
+  if (!isAuthorized) {
+    document.body.innerHTML = `
+      <div style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #080c14;
+        color: #ff4444;
+        font-family: sans-serif;
+        text-align: center;
+        padding: 20px;
+      ">
+        <h1 style="font-size: 2.5rem; margin-bottom: 20px; letter-spacing: 2px;">SECURITY EXCLUSION</h1>
+        <p style="font-size: 1.1rem; color: #7a9bb5; max-width: 600px; line-height: 1.6;">
+          Unauthorized domain detected. Access to Stargate CapEx Intelligence Terminal is locked on this host.
+        </p>
+      </div>
+    `;
+    throw new Error('Unauthorized host domain execution prevented.');
+  }
+
+  // 2. Prevent right-click context menu
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // 3. Prevent drag start
+  document.addEventListener('dragstart', e => e.preventDefault());
+
+  // 4. Prevent copy & cut actions
+  document.addEventListener('copy', e => {
+    e.preventDefault();
+    if (typeof showToast === 'function') {
+      showToast('⚠️ Copying data is disabled for terminal security.');
+    }
+  });
+  document.addEventListener('cut', e => e.preventDefault());
+
+  // 5. Block DevTools, Save and View Source shortcuts
+  document.addEventListener('keydown', e => {
+    // Ctrl+C / Cmd+C
+    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+      e.preventDefault();
+      if (typeof showToast === 'function') {
+        showToast('⚠️ Copying data is disabled for terminal security.');
+      }
+    }
+    // Ctrl+U / Cmd+U (View Source)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+      e.preventDefault();
+      if (typeof showToast === 'function') {
+        showToast('⚠️ Source code view is restricted.');
+      }
+    }
+    // Ctrl+S / Cmd+S (Save Page)
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      if (typeof showToast === 'function') {
+        showToast('⚠️ Saving this page is restricted.');
+      }
+    }
+    // F12 (Dev Tools)
+    if (e.key === 'F12') {
+      e.preventDefault();
+    }
+    // Ctrl+Shift+I / Cmd+Option+I (Inspect)
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
+      e.preventDefault();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === 'I' || e.key === 'i')) {
+      e.preventDefault();
+    }
+  });
+
+  // 6. Active DevTools Debugger Trap
+  (function () {
+    function startTrap() {
+      function trap() {
+        try {
+          (function() { return false; }['constructor']('debugger')());
+        } catch (e) {}
+      }
+      setInterval(trap, 150);
+    }
+    window.addEventListener('load', () => {
+      setTimeout(startTrap, 800);
+    });
+  })();
+})();
