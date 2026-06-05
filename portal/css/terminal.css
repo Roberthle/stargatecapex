@@ -181,16 +181,19 @@ body {
   overflow: hidden;
 }
 .sg-hero-bg {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background-image: url('/hero.jpg');
   background-size: cover;
   background-position: center 40%;
-  filter: brightness(0.55) saturate(0.8);
-  transform: scale(1.03);
-  transition: transform 12s ease;
+  filter: brightness(0.65) saturate(0.9);
+  will-change: transform;
+  animation: sg-hero-drift 16s ease-in-out infinite alternate;
+  transform-origin: center center;
 }
-.sg-hero:hover .sg-hero-bg { transform: scale(1.06); }
+@keyframes sg-hero-drift {
+  from { transform: scale(1.0)  translate(0,    0);   }
+  to   { transform: scale(1.45) translate(-3%, -2%);  }
+}
 .sg-hero-overlay {
   position: absolute;
   inset: 0;
