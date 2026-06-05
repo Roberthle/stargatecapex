@@ -225,27 +225,116 @@
       </div>
     </main>
 
-    <!-- SEO Footer: crawlable links to server-rendered pages -->
-    <footer style="margin-top:60px;padding:32px 0;border-top:1px solid var(--border);text-align:center">
-      <p style="font-size:10px;color:var(--white-30);letter-spacing:0.1em;line-height:1.8">
-        STARGATE CAPEX INTELLIGENCE TERMINAL &nbsp;&middot;&nbsp;
-        UCC-1 DATA SOURCED FROM STATE SOS FILINGS &nbsp;&middot;&nbsp;
-        SCORED DAILY AGAINST STARGATE NODE PROXIMITY<br />
-        Abilene TX &nbsp;&middot;&nbsp; Saline MI &nbsp;&middot;&nbsp; Port Washington WI &nbsp;&middot;&nbsp; Columbus OH &nbsp;&middot;&nbsp; Albuquerque NM
-      </p>
-      <p style="margin-top:12px;font-size:10px">
-        <a href="/leads" style="color:var(--cyan);text-decoration:none;margin:0 8px">Browse All Leads</a>
-        <a href="/leads?tier=priority" style="color:var(--white-30);text-decoration:none;margin:0 8px">Priority Leads</a>
-        <a href="/leads?node=abilene" style="color:var(--white-30);text-decoration:none;margin:0 8px">Abilene TX</a>
-        <a href="/leads?node=saline" style="color:var(--white-30);text-decoration:none;margin:0 8px">Saline MI</a>
-        <a href="/leads?node=portwashington" style="color:var(--white-30);text-decoration:none;margin:0 8px">Port Washington WI</a>
-        <a href="/sitemap.xml" style="color:var(--white-30);text-decoration:none;margin:0 8px">Sitemap</a>
-        <a href="/robots.txt" style="color:var(--white-30);text-decoration:none;margin:0 8px">robots.txt</a>
-        <a href="/llms.txt" style="color:var(--white-30);text-decoration:none;margin:0 8px">llms.txt</a>
-      </p>
+    <!-- FAQ Section -->
+    <section class="sg-faq-section" aria-label="Frequently Asked Questions">
+      <h2 class="sg-faq-title">Frequently Asked Questions</h2>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>What is Stargate Capex?</summary>
+          <div class="sg-faq-content">
+            <p>Stargate Capex is a public company directory and UCC-1 intelligence terminal tracking contractors, equipment operators, fabricators, and logistics vendors active in the $500 billion Project Stargate AI infrastructure buildout. It indexes public UCC-1 filings from state Secretary of State databases and cross-references them against proximity to active Stargate construction nodes across Texas, Michigan, Wisconsin, Ohio, and New Mexico.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>How does the propensity scoring work?</summary>
+          <div class="sg-faq-content">
+            <p>Each company is scored on a 0–100 scale using a multi-weighted algorithm combining: days remaining until UCC-1 lapse (urgency), distance to the nearest Stargate node (proximity), keyword relevance to core supply chain categories (construction, power, cooling, fiber, heavy equipment), lien type (equipment liens score higher), and filing age (the 24–36 month window is the peak refinance sweet spot). Higher scores indicate companies most likely to be in the market for new equipment financing today.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>What are the five Project Stargate nodes?</summary>
+          <div class="sg-faq-content">
+            <p>The five active Stargate node locations tracked in this terminal are: <strong>Abilene Campus</strong> (Abilene, TX — the flagship 200MW OpenAI/Oracle facility, already operational), <strong>The Barn</strong> (Saline, MI — a $16B facility by Related Digital &amp; Blackstone, breaking ground now), <strong>Lighthouse</strong> (Port Washington, WI — ~1GW target, 2028 delivery), <strong>Columbus Campus</strong> (Columbus, OH — planned), and <strong>ABQ Campus</strong> (Albuquerque, NM — planned). Each company listing shows its distance in km to the nearest node.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>Where does the UCC-1 data come from?</summary>
+          <div class="sg-faq-content">
+            <p>Data is sourced daily from public UCC-1 Uniform Commercial Code financing statements filed with state Secretary of State offices, including GA, CO, CA, CT, ID, MT, TX, MI, WI, OH, and NM. UCC-1 filings are public commercial records documenting secured financing relationships between businesses and lenders. All data displayed is a matter of public record.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>Can I claim my company profile or correct a listing?</summary>
+          <div class="sg-faq-content">
+            <p>Yes. Business owners whose companies appear in this directory can request corrections, suppressions, or profile updates via our CCPA opt-out gateway. This is a public directory of commercial UCC records — it is not a consumer report and does not contain personal credit data. To request a correction or suppression, contact us at <a href="mailto:rob@salesagentic.ai" style="color:var(--cyan)">rob@salesagentic.ai</a>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>What categories of companies are tracked?</summary>
+          <div class="sg-faq-content">
+            <p>Stargate Capex tracks six core Stargate supply chain categories: <strong>Construction &amp; Civil</strong> (contractors, excavation, concrete, structural steel, grading), <strong>Power &amp; Electrical</strong> (electricians, substations, generators, transformers, UPS systems, solar), <strong>Mechanical &amp; Cooling</strong> (HVAC, chillers, air handling, refrigeration, plumbing), <strong>Fiber &amp; IT Infrastructure</strong> (fiber, cabling, networking, telecommunications, data center services), <strong>Heavy Equipment &amp; Logistics</strong> (cranes, rigging, flatbed hauling, excavators, forklifts), and <strong>Manufacturing &amp; Fabrication</strong> (steel fab, metalwork, welding, machining, industrial assembly).</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Full Footer -->
+    <footer class="sg-footer" role="contentinfo">
+
+      <!-- Directory Nav Links -->
+      <div class="sg-footer-nav">
+        <a href="/">Registry Home</a>
+        <a href="/leads">Browse Directory</a>
+        <a href="/leads?tier=priority">Priority Companies</a>
+        <a href="/leads?node=abilene">Abilene TX</a>
+        <a href="/leads?node=saline">Saline MI</a>
+        <a href="/leads?node=portwashington">Port Washington WI</a>
+        <a href="/leads?node=columbus">Columbus OH</a>
+        <a href="/leads?node=albuquerque">Albuquerque NM</a>
+        <a href="/sitemap.xml">XML Sitemap Index</a>
+        <a href="/llms.txt">AI Search llms.txt</a>
+        <a href="/llms-full.txt" id="llms-full-link">LLMs-Full</a>
+        <a href="/api/stats">Market Reports</a>
+      </div>
+
+      <!-- Score Legend -->
+      <div class="sg-footer-legend">
+        <div class="sg-legend-item"><div class="sg-legend-bar priority"></div>Priority 85+</div>
+        <div class="sg-legend-item"><div class="sg-legend-bar hot"></div>Hot 65+</div>
+        <div class="sg-legend-item"><div class="sg-legend-bar monitor"></div>Monitor 40+</div>
+        <div class="sg-legend-item"><div class="sg-legend-bar low"></div>Low &lt;40</div>
+      </div>
+
+      <!-- Data attribution -->
+      <div class="sg-footer-note">
+        UCC-1 data: GA &middot; CO &middot; CA &middot; CT &middot; ID &middot; MT &middot; TX &middot; MI &middot; WI &middot; OH &middot; NM &nbsp;&mdash;&nbsp; Updated daily<br />
+        Scoring: UCC Maturity (W1) &nbsp;+&nbsp; Node Proximity (W2) &nbsp;+&nbsp; Keyword Relevance (W3) &nbsp;+&nbsp; Lien Type (W4)<br />
+        Contact: <a href="mailto:rob@salesagentic.ai" style="color:var(--cyan);text-decoration:none;border-bottom:1px dashed var(--cyan)">rob@salesagentic.ai</a>
+      </div>
+
+      <!-- FCRA Disclaimer -->
+      <div class="sg-footer-fcra">
+        <strong>FCRA Exemption Safeguard Disclaimer:</strong> Stargate Capex is a public directory of business-purpose Uniform Commercial Code (UCC) filings and commercial transactional records. It is not a Consumer Reporting Agency as defined by the Fair Credit Reporting Act (FCRA). The data displayed here must not be used to establish creditworthiness, insurance, or personal employment eligibility. Verified personal decision-maker contact records are securely masked; business owners can request suppressions or corrections via our CCPA opt-out gateways.
+      </div>
+
+      <!-- Copyright -->
+      <div class="sg-footer-copy">
+        &copy; 2026 Stargate Capex Intelligence Terminal. All rights reserved. Registered public B2B repository. &nbsp;&middot;&nbsp;
+        <a href="/robots.txt">robots.txt</a> &nbsp;&middot;&nbsp;
+        <a href="/sitemap.xml">Sitemap</a> &nbsp;&middot;&nbsp;
+        <a href="/llms.txt">llms.txt</a>
+      </div>
+
     </footer>
 
   </div><!-- end data-section -->
+
 
   <script src="/js/terminal.js"></script>
   <script>
