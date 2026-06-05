@@ -458,14 +458,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3. Prevent drag start
   document.addEventListener('dragstart', e => e.preventDefault());
 
-  // 4. Prevent copy & cut actions
+  // 4. Prevent text selection via mouse
+  document.addEventListener('selectstart', e => e.preventDefault());
+
+  // 5. Prevent copy & cut actions — also clear any selection
   document.addEventListener('copy', e => {
     e.preventDefault();
+    e.clipboardData && e.clipboardData.setData('text/plain', '');
+    window.getSelection && window.getSelection().removeAllRanges();
     if (typeof showToast === 'function') {
       showToast('⚠️ Copying data is disabled for terminal security.');
     }
   });
-  document.addEventListener('cut', e => e.preventDefault());
+  document.addEventListener('cut', e => {
+    e.preventDefault();
+    e.clipboardData && e.clipboardData.setData('text/plain', '');
+  });
+
+  // 6. Clear selection constantly so nothing stays highlighted
+  setInterval(() => {
+    if (window.getSelection) {
+      const sel = window.getSelection();
+      if (sel && sel.toString().length > 0) sel.removeAllRanges();
+    }
+  }, 300);
 
   // 5. Block DevTools, Save and View Source shortcuts
   document.addEventListener('keydown', e => {
