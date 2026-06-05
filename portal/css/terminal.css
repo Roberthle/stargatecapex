@@ -182,13 +182,15 @@ body {
 }
 .sg-hero-bg {
   position: absolute; inset: 0;
-  background-image: url('/hero.jpg?v=6');
+  background-image: url('/hero.jpg?v=7');
   background-size: cover;
   background-position: center 65%;
   filter: brightness(0.68) saturate(0.92);
   will-change: transform;
   animation: sg-hero-drift 22s ease-in-out infinite alternate;
   transform-origin: center 70%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 @keyframes sg-hero-drift {
   from { transform: scale(1.0); }
@@ -708,10 +710,8 @@ td { padding: 11px 14px; vertical-align: middle; }
     background-position: center 90%;
     animation: sg-hero-drift 22s ease-in-out infinite alternate;
     transform-origin: center 90%;
-  }
-  @keyframes sg-hero-drift {
-    from { transform: scale(1.0); }
-    to   { transform: scale(1.5); }
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 
   /* Hero content */
