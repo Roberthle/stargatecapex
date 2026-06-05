@@ -703,11 +703,11 @@ td { padding: 11px 14px; vertical-align: middle; }
   .sg-nav-tag { display: none; }
   .sg-nav-right { gap: 10px; }
 
-  /* Hero — reposition for portrait so campus is visible, not just sky */
+  /* Hero — reposition for portrait so campus fills the frame */
   .sg-hero-bg {
-    background-position: center 80%;
+    background-position: center 90%;
     animation: sg-hero-drift 22s ease-in-out infinite alternate;
-    transform-origin: center 80%;
+    transform-origin: center 90%;
   }
   @keyframes sg-hero-drift {
     from { transform: scale(1.0); }
