@@ -834,3 +834,44 @@ td { padding: 11px 14px; vertical-align: middle; }
   text-decoration: none;
 }
 .sg-footer-copy a:hover { color: var(--cyan); }
+
+/* ── Pagination ───────────────────────────────────────────────────────────────── */
+.sg-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 0 32px;
+}
+.sg-page-btn {
+  background: var(--white-05, rgba(255,255,255,0.05));
+  border: 1px solid var(--border);
+  color: var(--white-60);
+  font-family: 'D-DIN', sans-serif;
+  font-size: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sg-page-btn:hover:not(:disabled) {
+  background: rgba(0,240,255,0.08);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.sg-page-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+.sg-page-info {
+  font-size: 10px;
+  font-family: 'D-DIN', sans-serif;
+  letter-spacing: 0.15em;
+  color: var(--white-40);
+  text-transform: uppercase;
+  padding: 0 8px;
+}

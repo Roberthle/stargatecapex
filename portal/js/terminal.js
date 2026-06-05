@@ -6,6 +6,8 @@ const state = {
   leads: [], filtered: [], sortCol: 'propensity_score', sortDir: 'desc',
   minScore: 0, tier: '', node: '', stateFilter: '', lienType: '', search: '',
   expandedId: null,
+  currentPage: 1,
+  pageSize: 25,
 };
 
 // ── Nodes manifest ────────────────────────────────────────────────────────────
@@ -204,14 +206,41 @@ function renderTable(leads) {
   const tbody = $('leads-tbody');
   if (!tbody) return;
 
-  $('results-n').textContent = leads.length.toLocaleString();
+  $('results-n').textContent = state.leads.length.toLocaleString();
+  state.currentPage = 1;
+  renderPagedTable();
+}
+
+function renderPagedTable() {
+  const total = Math.max(1, Math.ceil(state.leads.length / state.pageSize));
+  state.currentPage = Math.max(1, Math.min(state.currentPage, total));
+  const start = (state.currentPage - 1) * state.pageSize;
+  const page  = state.leads.slice(start, start + state.pageSize);
+
+  _renderRows(page);
+
+  // Update pagination UI
+  const pc = $('page-current'), pt = $('page-total');
+  if (pc) pc.textContent = state.currentPage;
+  if (pt) pt.textContent = total;
+  const btnFirst = $('btn-page-first'), btnPrev = $('btn-page-prev');
+  const btnNext  = $('btn-page-next'),  btnLast = $('btn-page-last');
+  if (btnFirst) btnFirst.disabled = state.currentPage === 1;
+  if (btnPrev)  btnPrev.disabled  = state.currentPage === 1;
+  if (btnNext)  btnNext.disabled  = state.currentPage === total;
+  if (btnLast)  btnLast.disabled  = state.currentPage === total;
+}
+
+function _renderRows(leads) {
+  const tbody = $('leads-tbody');
+  if (!tbody) return;
 
   if (!leads.length) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="sg-empty">No leads match your filters. Try lowering the min score or clearing filters.</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9"><div class="sg-empty">No companies match your filters. Try lowering the min score or clearing filters.</div></td></tr>`;
     return;
   }
 
-  tbody.innerHTML = leads.map((r, i) => {
+  tbody.innerHTML = leads.map(r => {
     const tc  = tierClass(r.propensity_score);
     const lc  = lapseClass(r.days_to_lapse);
     const pct = r.propensity_score;
@@ -350,6 +379,22 @@ function bindControls() {
 
   const refresh = $('btn-refresh');
   if (refresh) refresh.addEventListener('click', () => { loadStats(); loadLeads(); });
+
+  // Pagination buttons
+  const goPage = (delta) => {
+    const total = Math.max(1, Math.ceil(state.leads.length / state.pageSize));
+    const next = state.currentPage + delta;
+    if (next < 1 || next > total) return;
+    state.currentPage = next;
+    renderPagedTable();
+    document.getElementById('data-section').scrollIntoView({ behavior: 'smooth' });
+  };
+  const btnFirst = $('btn-page-first'), btnPrev = $('btn-page-prev');
+  const btnNext  = $('btn-page-next'),  btnLast = $('btn-page-last');
+  if (btnFirst) btnFirst.addEventListener('click', () => { state.currentPage = 1; renderPagedTable(); document.getElementById('data-section').scrollIntoView({behavior:'smooth'}); });
+  if (btnPrev)  btnPrev.addEventListener ('click', () => goPage(-1));
+  if (btnNext)  btnNext.addEventListener ('click', () => goPage(+1));
+  if (btnLast)  btnLast.addEventListener ('click', () => { state.currentPage = Math.ceil(state.leads.length / state.pageSize); renderPagedTable(); document.getElementById('data-section').scrollIntoView({behavior:'smooth'}); });
 }
 
 let _debTimer = null;
