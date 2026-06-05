@@ -20,7 +20,7 @@ def get_db():
 
 @app.route('/')
 def index():
-    return send_from_directory('portal', 'index.html')
+    return send_from_directory(os.path.join(BASE_DIR, 'portal'), 'index.html')
 
 @app.route('/api/stats')
 def api_stats():
