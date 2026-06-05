@@ -348,6 +348,64 @@ site: https://stargatecapex.com
     return Response(txt, mimetype='text/plain')
 
 
+@app.route('/llms-full.txt')
+def llms_full_txt():
+    """Extended llms.txt — full top 100 companies for AI crawlers."""
+    conn = get_db()
+    stats = conn.execute('''SELECT COUNT(*) total,
+        SUM(CASE WHEN propensity_score>=85 THEN 1 ELSE 0 END) priority,
+        SUM(CASE WHEN lien_type="equipment" THEN 1 ELSE 0 END) equipment,
+        SUM(CASE WHEN lien_type="blanket" THEN 1 ELSE 0 END) mca
+        FROM stargate_leads''').fetchone()
+    top = conn.execute(
+        """SELECT company_name, city, state, nearest_node,
+                  propensity_score, lien_type, secured_party, days_to_lapse
+           FROM stargate_leads ORDER BY propensity_score DESC LIMIT 100"""
+    ).fetchall()
+    conn.close()
+
+    top_list = '\n'.join(
+        f'- {r["company_name"]} ({r["city"]}, {r["state"]}) | '
+        f'Type: {r["lien_type"].title()} | Lender: {r["secured_party"] or "N/A"} | '
+        f'Score: {r["propensity_score"]} | Node: {r["nearest_node"]} | '
+        f'Days to Lapse: {r["days_to_lapse"] or "N/A"}'
+        for r in top
+    )
+
+    txt = f"""# Stargate Capex — Full Company Index (llms-full.txt)
+
+> Extended AI retrieval index for the $500B Project Stargate UCC-1 company database.
+
+## Database Summary
+
+- Total companies indexed: {stats['total']:,}
+- Priority tier (score 85+): {stats['priority']:,}
+- Equipment liens: {stats['equipment']:,}
+- MCA / Blanket liens: {stats['mca']:,}
+
+## Active Stargate Nodes
+
+- Abilene Campus — Abilene, Texas
+- Columbus Campus — Columbus, Ohio
+- ABQ Campus — Albuquerque, New Mexico
+
+## Top 100 Companies by Propensity Score
+
+{top_list}
+
+## Browse Full Directory
+
+- All companies: https://stargatecapex.com/leads
+- Priority only: https://stargatecapex.com/leads?tier=priority
+- Abilene TX: https://stargatecapex.com/leads?node=abilene
+- Columbus OH: https://stargatecapex.com/leads?node=columbus
+- Albuquerque NM: https://stargatecapex.com/leads?node=albuquerque
+
+site: https://stargatecapex.com
+"""
+    return Response(txt, mimetype='text/plain')
+
+
 @app.route('/leads')
 def leads_page():
     """Server-rendered HTML lead page — fully crawlable by Google and AI bots."""
