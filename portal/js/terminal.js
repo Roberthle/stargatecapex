@@ -62,7 +62,7 @@ async function loadStats() {
     animCount('stat-equipment',d.equipment|| 0);
     animCount('stat-mca',      d.mca      || 0);
     const pct = d.total ? Math.round(((d.priority||0) + (d.hot||0)) / d.total * 100) : 0;
-    setPipeline(`${d.total?.toLocaleString()} leads indexed · ${pct}% priority or hot`, pct);
+    setPipeline(`${d.total?.toLocaleString()} companies indexed · ${pct}% priority or hot`, pct);
   } catch(e) {
     setPipeline('DB connection error', 0);
   }
