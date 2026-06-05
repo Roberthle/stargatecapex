@@ -469,28 +469,36 @@ def leads_page():
           <td>{email_html}</td>
         </tr>"""
 
-    json_ld = json.dumps({{
+    # Pre-compute all values as plain strings to avoid f-string double-brace issues
+    total_str     = f"{stats['total']:,}"
+    priority_str  = f"{stats['priority']:,}"
+    hot_str       = f"{stats['hot']:,}"
+    equipment_str = f"{stats['equipment']:,}"
+    mca_str       = f"{stats['mca']:,}"
+    row_count_str = str(len(rows))
+
+    json_ld = json.dumps({
         "@context": "https://schema.org",
         "@type": "Dataset",
-        "name": "Stargate Capex UCC Lead Database",
-        "description": f"{{stats['total']:,}} UCC-1 equipment financing and MCA leads for contractors and vendors active in the Project Stargate AI infrastructure buildout across TX, MI, WI, OH, NM.",
+        "name": "Stargate Capex UCC Company Database",
+        "description": f"{total_str} UCC-1 equipment financing and MCA companies active in the Project Stargate AI infrastructure buildout across TX, OH, NM.",
         "url": "https://stargatecapex.com/leads",
-        "creator": {{"@type": "Organization", "name": "Stargate Capex", "url": "https://stargatecapex.com"}},
-        "keywords": ["UCC-1 leads", "equipment financing", "Project Stargate", "AI data center", "MCA leads", "construction leads", "Abilene Texas", "equipment loans"],
+        "creator": {"@type": "Organization", "name": "Stargate Capex", "url": "https://stargatecapex.com"},
+        "keywords": ["UCC-1 companies", "equipment financing", "Project Stargate", "AI data center", "MCA companies", "construction companies", "Abilene Texas", "equipment loans"],
         "numberOfItems": stats['total'],
         "variableMeasured": ["propensity_score", "days_to_lapse", "node_dist_km", "lien_type"]
-    }})
+    })
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Stargate Capex Lead Database — {{len(rows)}} UCC Leads | stargatecapex.com</title>
-  <meta name="description" content="Browse {{stats['total']:,}} UCC-1 equipment financing and MCA leads for the $500B Project Stargate AI data center buildout. Contractors, fabricators, and power vendors near Abilene TX, Saline MI, Port Washington WI." />
+  <title>Stargate Capex Company Database — {row_count_str} UCC Companies | stargatecapex.com</title>
+  <meta name="description" content="Browse {total_str} UCC-1 equipment financing and MCA companies for the $500B Project Stargate AI data center buildout. Contractors, fabricators, and power vendors near Abilene TX, Columbus OH, Albuquerque NM." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://stargatecapex.com/leads" />
-  <script type="application/ld+json">{{json_ld}}</script>
+  <script type="application/ld+json">{json_ld}</script>
   <style>
     body{{font-family:system-ui,sans-serif;margin:0;padding:20px;background:#080c14;color:#e0e0e0;font-size:13px}}
     h1{{color:#00e5ff;margin-bottom:4px;font-size:22px}}
@@ -516,32 +524,30 @@ def leads_page():
 </head>
 <body>
   <a href="/" class="back">← Back to Terminal</a>
-  <h1>Stargate Capex — UCC Lead Database</h1>
-  <p class="sub">{{stats['total']:,}} total leads · {{stats['priority']:,}} priority · {{stats['equipment']:,}} equipment liens · {{stats['mca']:,}} MCA/blanket &mdash; Updated daily</p>
+  <h1>Stargate Capex — UCC Company Database</h1>
+  <p class="sub">{total_str} total companies · {priority_str} priority · {equipment_str} equipment liens · {mca_str} MCA/blanket &mdash; Updated daily</p>
 
   <div class="stats">
-    <div class="stat"><b>{{stats['total']:,}}</b><span>Total Leads</span></div>
-    <div class="stat"><b>{{stats['priority']:,}}</b><span>Priority (85+)</span></div>
-    <div class="stat"><b>{{stats['hot']:,}}</b><span>Hot (65+)</span></div>
-    <div class="stat"><b>{{stats['equipment']:,}}</b><span>Equipment Liens</span></div>
-    <div class="stat"><b>{{stats['mca']:,}}</b><span>MCA / Blanket</span></div>
+    <div class="stat"><b>{total_str}</b><span>Total Companies</span></div>
+    <div class="stat"><b>{priority_str}</b><span>Priority (85+)</span></div>
+    <div class="stat"><b>{hot_str}</b><span>Hot (65+)</span></div>
+    <div class="stat"><b>{equipment_str}</b><span>Equipment Liens</span></div>
+    <div class="stat"><b>{mca_str}</b><span>MCA / Blanket</span></div>
   </div>
 
   <div class="filters">
-    <a href="/leads">All Leads</a>
+    <a href="/leads">All Companies</a>
     <a href="/leads?tier=priority">Priority</a>
     <a href="/leads?tier=hot">Hot</a>
     <a href="/leads?node=abilene">Abilene TX</a>
-    <a href="/leads?node=saline">Saline MI</a>
-    <a href="/leads?node=portwashington">Port Washington WI</a>
     <a href="/leads?node=columbus">Columbus OH</a>
     <a href="/leads?node=albuquerque">Albuquerque NM</a>
+    <a href="/leads?state=TX">Texas</a>
     <a href="/leads?state=GA">Georgia</a>
     <a href="/leads?state=CO">Colorado</a>
-    <a href="/leads?state=TX">Texas</a>
   </div>
 
-  <p>Showing top {{len(rows)}} leads sorted by propensity score</p>
+  <p>Showing top {row_count_str} companies sorted by propensity score</p>
 
   <table>
     <thead><tr>
@@ -553,13 +559,16 @@ def leads_page():
   </table>
 
   <footer>
-    <p>Stargate Capex — UCC-1 Lead Intelligence Terminal — <a href="https://stargatecapex.com">stargatecapex.com</a></p>
-    <p>Data sourced from public UCC-1 filings. Project Stargate nodes: Abilene TX &middot; Saline MI &middot; Port Washington WI &middot; Columbus OH &middot; Albuquerque NM</p>
+    <p>Stargate Capex — UCC-1 Company Intelligence Terminal — <a href="https://stargatecapex.com">stargatecapex.com</a></p>
+    <p>Data sourced from public UCC-1 filings. Project Stargate nodes: Abilene TX &middot; Columbus OH &middot; Albuquerque NM</p>
     <p><a href="/sitemap.xml">Sitemap</a> &middot; <a href="/robots.txt">robots.txt</a> &middot; <a href="/llms.txt">llms.txt</a></p>
   </footer>
 </body>
 </html>"""
+
     return html
+
+
 
 
 if __name__ == '__main__':
