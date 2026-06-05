@@ -127,7 +127,7 @@
     <div class="sg-stats" role="region" aria-label="Lead statistics">
       <div class="sg-stat">
         <div class="sg-stat-value cyan" id="stat-total">—</div>
-        <div class="sg-stat-label">Stargate Leads</div>
+        <div class="sg-stat-label">Companies</div>
       </div>
       <div class="sg-stat">
         <div class="sg-stat-value" id="stat-priority" style="color:var(--gold)">—</div>
@@ -248,5 +248,87 @@
   </div><!-- end data-section -->
 
   <script src="/js/terminal.js"></script>
+  <script>
+  (function() {
+      let sessionId = sessionStorage.getItem('tomcat_visitor_session_id');
+      if (!sessionId) {
+          sessionId = 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          sessionStorage.setItem('tomcat_visitor_session_id', sessionId);
+      }
+
+      const visitData = {
+          session_id: sessionId,
+          path: window.location.pathname,
+          referrer: document.referrer || '',
+          site: 'stargatecapex.com'
+      };
+
+      let visitId = null;
+      let lastPingTime = Date.now();
+
+      fetch('https://www.tomcatregistry.com/api/analytics/visit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(visitData)
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success && data.visit_id) {
+              visitId = data.visit_id;
+              sessionStorage.setItem('tomcat_last_visit_id', visitId);
+          }
+      })
+      .catch(err => console.error('Analytics error:', err));
+
+      setInterval(() => {
+          if (!visitId) {
+              visitId = sessionStorage.getItem('tomcat_last_visit_id');
+          }
+          if (visitId) {
+              const now = Date.now();
+              const delta = Math.round((now - lastPingTime) / 1000);
+              if (delta > 0) {
+                  lastPingTime = now;
+                  fetch('https://www.tomcatregistry.com/api/analytics/ping', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ visit_id: visitId, duration: delta })
+                  }).catch(() => {});
+              }
+          }
+      }, 15000);
+
+      window.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden') {
+              sendFinalPing();
+          }
+      });
+      window.addEventListener('pagehide', sendFinalPing);
+
+      function sendFinalPing() {
+          if (!visitId) {
+              visitId = sessionStorage.getItem('tomcat_last_visit_id');
+          }
+          if (visitId) {
+              const now = Date.now();
+              const delta = Math.round((now - lastPingTime) / 1000);
+              if (delta > 0) {
+                  lastPingTime = now;
+                  const blob = new Blob([JSON.stringify({ visit_id: visitId, duration: delta })], { type: 'application/json' });
+                  if (navigator.sendBeacon) {
+                      navigator.sendBeacon('https://www.tomcatregistry.com/api/analytics/ping', blob);
+                  } else {
+                      fetch('https://www.tomcatregistry.com/api/analytics/ping', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ visit_id: visitId, duration: delta }),
+                          keepalive: true
+                      }).catch(() => {});
+                  }
+              }
+          }
+      }
+  })();
+  </script>
 </body>
 </html>
