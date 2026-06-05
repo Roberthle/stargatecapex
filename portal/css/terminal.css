@@ -182,17 +182,17 @@ body {
 }
 .sg-hero-bg {
   position: absolute; inset: 0;
-  background-image: url('/hero.jpg?v=4');
+  background-image: url('/hero.jpg?v=5');
   background-size: cover;
-  background-position: center 25%;
+  background-position: center 60%;
   filter: brightness(0.65) saturate(0.92);
   will-change: transform;
   animation: sg-hero-drift 20s ease-in-out infinite alternate;
-  transform-origin: center top;
+  transform-origin: center center;
 }
 @keyframes sg-hero-drift {
   from { transform: scale(1.0); }
-  to   { transform: scale(1.5); }
+  to   { transform: scale(1.4); }
 }
 .sg-hero-overlay {
   position: absolute;
