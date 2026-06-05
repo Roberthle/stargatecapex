@@ -182,17 +182,17 @@ body {
 }
 .sg-hero-bg {
   position: absolute; inset: 0;
-  background-image: url('/hero.jpg?v=2');
+  background-image: url('/hero.jpg?v=3');
   background-size: cover;
-  background-position: center 30%;
-  filter: brightness(0.65) saturate(0.9);
+  background-position: center 20%;
+  filter: brightness(0.62) saturate(0.95);
   will-change: transform;
-  animation: sg-hero-drift 18s ease-in-out infinite alternate;
-  transform-origin: center center;
+  animation: sg-hero-drift 20s ease-in-out infinite alternate;
+  transform-origin: center 35%;
 }
 @keyframes sg-hero-drift {
-  from { transform: scale(1.0)  translate(0,   0);   }
-  to   { transform: scale(1.35) translate(-2%, -1%); }
+  from { transform: scale(1.0);  }
+  to   { transform: scale(1.55) translate(-2%, 3%); }
 }
 .sg-hero-overlay {
   position: absolute;
