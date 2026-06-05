@@ -7,9 +7,9 @@ SEO: robots.txt, sitemap.xml, llms.txt, server-rendered /leads page
 import os, sqlite3, json
 from datetime import datetime
 from flask import Response
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, render_template
 
-app = Flask(__name__, static_folder='portal', static_url_path='')
+app = Flask(__name__, static_folder='portal', static_url_path='', template_folder='templates')
 
 # Relative path works both locally and on Render
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -23,7 +23,20 @@ def get_db():
 
 @app.route('/')
 def index():
-    return send_from_directory(os.path.join(BASE_DIR, 'portal'), 'index.html')
+    """Serve homepage — inject top companies as SSR for Google indexing."""
+    try:
+        conn = get_db()
+        rows = conn.execute(
+            '''SELECT company_name, city, state, secured_party, lien_type,
+                      propensity_score, nearest_node, days_to_lapse, filing_date
+               FROM stargate_leads
+               ORDER BY propensity_score DESC LIMIT 25'''
+        ).fetchall()
+        conn.close()
+        activity = [dict(r) for r in rows]
+    except Exception:
+        activity = []
+    return render_template('index.html', activity=activity)
 
 @app.route('/api/stats')
 def api_stats():

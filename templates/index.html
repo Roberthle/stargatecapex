@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Stargate Capex Intelligence Terminal — UCC-1 equipment financing and MCA leads for contractors, suppliers, and vendors active in the $500B Project Stargate AI data center buildout across Texas, Michigan, Wisconsin, Ohio, and New Mexico." />
+  <meta name="keywords" content="Stargate Capex, Project Stargate companies, AI data center contractors, UCC-1 equipment filings, MCA companies, OpenAI Abilene, Oracle data center, equipment financing, B2B company intelligence" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://stargatecapex.com/" />
+
+  <meta property="og:url"         content="https://stargatecapex.com/" />
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Stargate Capex — AI Infrastructure UCC Company Directory" />
+  <meta property="og:description" content="UCC-1 company directory for the $500B Project Stargate AI buildout corridor — contractors, equipment operators, and vendors." />
+  <meta property="og:image"       content="/hero.jpg" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Stargate Capex — AI Infrastructure UCC Company Directory" />
+  <meta name="twitter:description" content="UCC-1 companies near Abilene TX · Saline MI · Port Washington WI · Columbus OH · Albuquerque NM." />
+  <meta name="twitter:image"       content="https://stargatecapex.com/hero.jpg" />
+
+  <!-- llms.txt and sitemap discovery -->
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+
+  <title>Stargate Capex — AI Infrastructure UCC Company Directory | stargatecapex.com</title>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Stargate Capex Intelligence Terminal",
+    "applicationCategory": "BusinessApplication",
+    "description": "UCC-1 equipment financing and MCA lead terminal for the Project Stargate AI infrastructure buildout. Tracks contractors, fabricators, and vendors across TX, MI, WI, OH, NM Stargate nodes.",
+    "offers": { "@type": "Offer", "priceCurrency": "USD", "price": "0" }
+  }
+  </script>
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin />
+  <link href="https://fonts.cdnfonts.com/css/d-din" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/terminal.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       NAV
+  ══════════════════════════════════════════════ -->
+  <nav class="sg-nav" id="main-nav" role="navigation" aria-label="Main navigation">
+    <a class="sg-logo" href="/" id="logo-link" aria-label="Stargate Capex Terminal">
+      <div class="sg-logo-mark"></div>
+      <span class="sg-logo-text">STARGATE</span>
+      <span class="sg-logo-divider"></span>
+      <span class="sg-logo-capex">CAPEX</span>
+    </a>
+    <div class="sg-nav-right">
+      <span class="sg-nav-tag" id="nav-timestamp">—</span>
+      <div class="sg-live" aria-live="polite">
+        <div class="sg-live-dot" id="nav-live-dot"></div>
+        <span>Live Data</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════
+       PIPELINE BANNER
+  ══════════════════════════════════════════════ -->
+  <div class="sg-pipeline" id="pipeline-banner" role="status" aria-live="polite" style="opacity:0;transition:opacity 0.3s">
+    <span class="sg-pipeline-label" id="pipeline-label">Initializing</span>
+    <div class="sg-pipeline-track" aria-hidden="true">
+      <div class="sg-pipeline-fill" id="pipeline-fill"></div>
+    </div>
+    <span class="sg-pipeline-pct" id="pipeline-pct">0%</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════ -->
+  <section class="sg-hero" id="hero" aria-label="Stargate Capex Hero">
+    <div class="sg-hero-bg" aria-hidden="true"></div>
+    <div class="sg-hero-overlay" aria-hidden="true"></div>
+
+    <div class="sg-hero-grid">
+      <div class="sg-hero-content">
+        <span class="sg-hero-eyebrow">Project Stargate — UCC Equipment & MCA Company Directory</span>
+        <h1 class="sg-hero-title">
+          Stargate <span>CapEx</span><br />Intelligence Terminal
+        </h1>
+        <p class="sg-hero-sub">
+          The definitive <strong>UCC-1 company directory</strong> for the <strong>$500B Project Stargate</strong> AI infrastructure corridor.
+          Identify contractors, fabricators, power vendors, and equipment operators
+          whose financing is maturing now — scored and ranked by proximity to active
+          <strong>Stargate nodes</strong> across Abilene TX, Saline MI, Port Washington WI, Columbus OH, and Albuquerque NM.
+        </p>
+        <div class="sg-hero-btns">
+          <button class="sg-btn sg-btn-primary" onclick="document.getElementById('data-section').scrollIntoView({behavior:'smooth'})" id="open-terminal-btn">
+            ⚡ Open Terminal
+          </button>
+          <button class="sg-btn sg-btn-outline" onclick="document.getElementById('data-section').scrollIntoView({behavior:'smooth'})" id="view-leads-btn">
+            📊 View Companies
+          </button>
+        </div>
+      </div>
+
+      <!-- Node status card -->
+      <div class="sg-hero-card">
+        <div class="sg-hero-card-title">Stargate Node Status</div>
+        <div class="sg-node-list" id="hero-node-list"></div>
+      </div>
+    </div>
+
+    <div class="sg-scroll-indicator" onclick="document.getElementById('data-section').scrollIntoView({behavior:'smooth'})" aria-hidden="true">
+      <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><polyline points="2,4 7,10 12,4"/></svg>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       DATA SECTION
+  ══════════════════════════════════════════════ -->
+  <div id="data-section">
+
+    <!-- Stats Strip -->
+    <div class="sg-stats" role="region" aria-label="Company statistics">
+      <div class="sg-stat">
+        <div class="sg-stat-value cyan" id="stat-total">—</div>
+        <div class="sg-stat-label">Companies</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value" id="stat-priority" style="color:var(--gold)">—</div>
+        <div class="sg-stat-label">Priority — Score 85+</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value cyan" id="stat-hot">—</div>
+        <div class="sg-stat-label">Hot — Score 65+</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value" id="stat-monitor" style="color:var(--white-60)">—</div>
+        <div class="sg-stat-label">Monitor — Score 40+</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value cyan" id="stat-equipment">—</div>
+        <div class="sg-stat-label">Equipment Liens</div>
+      </div>
+      <div class="sg-stat">
+        <div class="sg-stat-value" id="stat-mca" style="color:var(--gold)">—</div>
+        <div class="sg-stat-label">MCA / Blanket</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="sg-controls" role="search" aria-label="Filter companies">
+      <div class="sg-ctrl-group">
+        <div class="sg-slider-group">
+          <span class="sg-slider-label">Min Score</span>
+          <input type="range" id="ctrl-min-score" class="sg-slider" min="0" max="100" value="0" aria-label="Minimum propensity score" />
+          <span class="sg-slider-val" id="ctrl-score-display">0</span>
+        </div>
+        <select id="ctrl-tier"  class="sg-select" aria-label="Filter by tier">
+          <option value="">All Tiers</option>
+          <option value="priority">Priority (85+)</option>
+          <option value="hot">Hot (65+)</option>
+          <option value="monitor">Monitor (40+)</option>
+          <option value="low">Low (&lt;40)</option>
+        </select>
+        <select id="ctrl-node"  class="sg-select" aria-label="Filter by Stargate node">
+          <option value="">All Nodes</option>
+        </select>
+        <select id="ctrl-state" class="sg-select" aria-label="Filter by state">
+          <option value="">All States</option>
+        </select>
+        <select id="ctrl-lien"  class="sg-select" aria-label="Filter by lien type">
+          <option value="">All Types</option>
+          <option value="equipment">Equipment Liens</option>
+          <option value="blanket">MCA / Blanket</option>
+        </select>
+        <input type="search" id="ctrl-search" class="sg-input" placeholder="Search company name…" aria-label="Search by company" autocomplete="off" spellcheck="false" />
+      </div>
+      <div>
+        <button id="btn-refresh" class="sg-btn sg-btn-outline" type="button">&#x21BA;&nbsp; Refresh</button>
+      </div>
+    </div>
+
+    <!-- Results Bar -->
+    <div class="sg-results-bar">
+      <span class="sg-results-count" aria-live="polite">
+        Showing <span id="results-n">—</span> companies
+      </span>
+      <span class="sg-sort-info" id="sort-info">Sorted by Score ↓</span>
+    </div>
+
+    <!-- Table -->
+    <main role="main">
+      <div class="sg-table-wrap">
+        <table id="leads-table" aria-label="Stargate Capex company directory">
+          <colgroup>
+            <col style="width:80px" />   <!-- score -->
+            <col style="width:260px" />  <!-- company -->
+            <col style="width:110px" />  <!-- type -->
+            <col style="width:150px" />  <!-- lender -->
+            <col style="width:60px" />   <!-- age -->
+            <col style="width:110px" />  <!-- lapse -->
+            <col style="width:110px" />  <!-- volume -->
+            <col style="width:160px" />  <!-- node -->
+            <col />                      <!-- match -->
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="sortable sorted" data-col="propensity_score" data-dir="desc" scope="col">Score</th>
+              <th class="sortable" data-col="company_name"       data-dir="asc"  scope="col">Company</th>
+              <th scope="col">Type</th>
+              <th scope="col">Secured Party</th>
+              <th class="sortable" data-col="filing_age_months"  data-dir="desc" scope="col">Age Mo</th>
+              <th class="sortable" data-col="days_to_lapse"      data-dir="asc"  scope="col">Lapse</th>
+              <th scope="col">Est. Volume</th>
+              <th class="sortable" data-col="node_dist_km"       data-dir="asc"  scope="col">Nearest Node</th>
+              <th scope="col">Match</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- Pagination Controls -->
+    <div class="sg-pagination" id="pagination-controls" role="navigation" aria-label="Table pagination">
+      <button id="btn-page-first" class="sg-page-btn" type="button" aria-label="First page" disabled>&laquo;</button>
+      <button id="btn-page-prev"  class="sg-page-btn" type="button" aria-label="Previous page" disabled>&lsaquo;</button>
+      <span class="sg-page-info">PAGE <span id="page-current">1</span> OF <span id="page-total">1</span></span>
+      <button id="btn-page-next"  class="sg-page-btn" type="button" aria-label="Next page" disabled>&rsaquo;</button>
+      <button id="btn-page-last"  class="sg-page-btn" type="button" aria-label="Last page" disabled>&raquo;</button>
+    </div>
+
+    <!-- FAQ Section -->
+    <section class="sg-faq-section" aria-label="Frequently Asked Questions">
+      <h2 class="sg-faq-title">Frequently Asked Questions</h2>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>What is Stargate Capex?</summary>
+          <div class="sg-faq-content">
+            <p>Stargate Capex is a public company directory and UCC-1 intelligence terminal tracking contractors, equipment operators, fabricators, and logistics vendors active in the $500 billion Project Stargate AI infrastructure buildout. It indexes public UCC-1 filings from state Secretary of State databases and cross-references them against proximity to active Stargate construction nodes across Texas, Michigan, Wisconsin, Ohio, and New Mexico.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>How does the propensity scoring work?</summary>
+          <div class="sg-faq-content">
+            <p>Each company is scored on a 0–100 scale using a multi-weighted algorithm combining: days remaining until UCC-1 lapse (urgency), distance to the nearest Stargate node (proximity), keyword relevance to core supply chain categories (construction, power, cooling, fiber, heavy equipment), lien type (equipment liens score higher), and filing age (the 24–36 month window is the peak refinance sweet spot). Higher scores indicate companies most likely to be in the market for new equipment financing today.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>What are the five Project Stargate nodes?</summary>
+          <div class="sg-faq-content">
+            <p>The five active Stargate node locations tracked in this terminal are: <strong>Abilene Campus</strong> (Abilene, TX — the flagship 200MW OpenAI/Oracle facility, already operational), <strong>The Barn</strong> (Saline, MI — a $16B facility by Related Digital &amp; Blackstone, breaking ground now), <strong>Lighthouse</strong> (Port Washington, WI — ~1GW target, 2028 delivery), <strong>Columbus Campus</strong> (Columbus, OH — planned), and <strong>ABQ Campus</strong> (Albuquerque, NM — planned). Each company listing shows its distance in km to the nearest node.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>Where does the UCC-1 data come from?</summary>
+          <div class="sg-faq-content">
+            <p>Data is sourced daily from public UCC-1 Uniform Commercial Code financing statements filed with state Secretary of State offices, including GA, CO, CA, CT, ID, MT, TX, MI, WI, OH, and NM. UCC-1 filings are public commercial records documenting secured financing relationships between businesses and lenders. All data displayed is a matter of public record.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>Can I claim my company profile or correct a listing?</summary>
+          <div class="sg-faq-content">
+            <p>Yes. Business owners whose companies appear in this directory can request corrections, suppressions, or profile updates via our CCPA opt-out gateway. This is a public directory of commercial UCC records — it is not a consumer report and does not contain personal credit data. To request a correction or suppression, contact us at <a href="mailto:rob@salesagentic.ai" style="color:var(--cyan)">rob@salesagentic.ai</a>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="sg-faq-item">
+        <details>
+          <summary>What categories of companies are tracked?</summary>
+          <div class="sg-faq-content">
+            <p>Stargate Capex tracks six core Stargate supply chain categories: <strong>Construction &amp; Civil</strong> (contractors, excavation, concrete, structural steel, grading), <strong>Power &amp; Electrical</strong> (electricians, substations, generators, transformers, UPS systems, solar), <strong>Mechanical &amp; Cooling</strong> (HVAC, chillers, air handling, refrigeration, plumbing), <strong>Fiber &amp; IT Infrastructure</strong> (fiber, cabling, networking, telecommunications, data center services), <strong>Heavy Equipment &amp; Logistics</strong> (cranes, rigging, flatbed hauling, excavators, forklifts), and <strong>Manufacturing &amp; Fabrication</strong> (steel fab, metalwork, welding, machining, industrial assembly).</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Full Footer -->
+    <footer class="sg-footer" role="contentinfo">
+
+      <!-- Directory Nav Links -->
+      <div class="sg-footer-nav">
+        <a href="/">Registry Home</a>
+        <a href="/leads">Browse Directory</a>
+        <a href="/leads?tier=priority">Priority Companies</a>
+        <a href="/leads?node=abilene">Abilene TX</a>
+        <a href="/leads?node=saline">Saline MI</a>
+        <a href="/leads?node=portwashington">Port Washington WI</a>
+        <a href="/leads?node=columbus">Columbus OH</a>
+        <a href="/leads?node=albuquerque">Albuquerque NM</a>
+        <a href="/sitemap.xml">XML Sitemap Index</a>
+        <a href="/llms.txt">AI Search llms.txt</a>
+        <a href="/llms-full.txt" id="llms-full-link">LLMs-Full</a>
+        <a href="/api/stats">Market Reports</a>
+      </div>
+
+      <!-- Score Legend -->
+      <div class="sg-footer-legend">
+        <div class="sg-legend-item"><div class="sg-legend-bar priority"></div>Priority 85+</div>
+        <div class="sg-legend-item"><div class="sg-legend-bar hot"></div>Hot 65+</div>
+        <div class="sg-legend-item"><div class="sg-legend-bar monitor"></div>Monitor 40+</div>
+        <div class="sg-legend-item"><div class="sg-legend-bar low"></div>Low &lt;40</div>
+      </div>
+
+      <!-- Data attribution -->
+      <div class="sg-footer-note">
+        UCC-1 data: GA &middot; CO &middot; CA &middot; CT &middot; ID &middot; MT &middot; TX &middot; MI &middot; WI &middot; OH &middot; NM &nbsp;&mdash;&nbsp; Updated daily<br />
+        Scoring: UCC Maturity (W1) &nbsp;+&nbsp; Node Proximity (W2) &nbsp;+&nbsp; Keyword Relevance (W3) &nbsp;+&nbsp; Lien Type (W4)<br />
+        Contact: <a href="mailto:rob@salesagentic.ai" style="color:var(--cyan);text-decoration:none;border-bottom:1px dashed var(--cyan)">rob@salesagentic.ai</a>
+      </div>
+
+      <!-- FCRA Disclaimer -->
+      <div class="sg-footer-fcra">
+        <strong>FCRA Exemption Safeguard Disclaimer:</strong> Stargate Capex is a public directory of business-purpose Uniform Commercial Code (UCC) filings and commercial transactional records. It is not a Consumer Reporting Agency as defined by the Fair Credit Reporting Act (FCRA). The data displayed here must not be used to establish creditworthiness, insurance, or personal employment eligibility. Verified personal decision-maker contact records are securely masked; business owners can request suppressions or corrections via our CCPA opt-out gateways.
+      </div>
+
+      <!-- Copyright -->
+      <div class="sg-footer-copy">
+        &copy; 2026 Stargate Capex Intelligence Terminal. All rights reserved. Registered public B2B repository. &nbsp;&middot;&nbsp;
+        <a href="/robots.txt">robots.txt</a> &nbsp;&middot;&nbsp;
+        <a href="/sitemap.xml">Sitemap</a> &nbsp;&middot;&nbsp;
+        <a href="/llms.txt">llms.txt</a>
+      </div>
+
+    </footer>
+
+  </div><!-- end data-section -->
+
+
+  <script src="/js/terminal.js"></script>
+  <script>
+  (function() {
+      let sessionId = sessionStorage.getItem('tomcat_visitor_session_id');
+      if (!sessionId) {
+          sessionId = 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          sessionStorage.setItem('tomcat_visitor_session_id', sessionId);
+      }
+
+      const visitData = {
+          session_id: sessionId,
+          path: window.location.pathname,
+          referrer: document.referrer || '',
+          site: 'stargatecapex.com'
+      };
+
+      let visitId = null;
+      let lastPingTime = Date.now();
+
+      fetch('https://www.tomcatregistry.com/api/analytics/visit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(visitData)
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success && data.visit_id) {
+              visitId = data.visit_id;
+              sessionStorage.setItem('tomcat_last_visit_id', visitId);
+          }
+      })
+      .catch(err => console.error('Analytics error:', err));
+
+      setInterval(() => {
+          if (!visitId) {
+              visitId = sessionStorage.getItem('tomcat_last_visit_id');
+          }
+          if (visitId) {
+              const now = Date.now();
+              const delta = Math.round((now - lastPingTime) / 1000);
+              if (delta > 0) {
+                  lastPingTime = now;
+                  fetch('https://www.tomcatregistry.com/api/analytics/ping', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ visit_id: visitId, duration: delta })
+                  }).catch(() => {});
+              }
+          }
+      }, 15000);
+
+      window.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden') {
+              sendFinalPing();
+          }
+      });
+      window.addEventListener('pagehide', sendFinalPing);
+
+      function sendFinalPing() {
+          if (!visitId) {
+              visitId = sessionStorage.getItem('tomcat_last_visit_id');
+          }
+          if (visitId) {
+              const now = Date.now();
+              const delta = Math.round((now - lastPingTime) / 1000);
+              if (delta > 0) {
+                  lastPingTime = now;
+                  const blob = new Blob([JSON.stringify({ visit_id: visitId, duration: delta })], { type: 'application/json' });
+                  if (navigator.sendBeacon) {
+                      navigator.sendBeacon('https://www.tomcatregistry.com/api/analytics/ping', blob);
+                  } else {
+                      fetch('https://www.tomcatregistry.com/api/analytics/ping', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ visit_id: visitId, duration: delta }),
+                          keepalive: true
+                      }).catch(() => {});
+                  }
+              }
+          }
+      }
+  })();
+  </script>
+
+  <!-- ══════════════════════════════════════════════
+       SERVER-RENDERED COMPANY INDEX (Google/SEO)
+       Invisible to users, fully crawlable by Googlebot.
+       Top 25 companies pre-rendered by Flask at request time.
+  ══════════════════════════════════════════════ -->
+  <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;" id="ssr-index">
+    <h2>Stargate CapEx — Top Companies by Propensity Score</h2>
+    <p>UCC-1 equipment financing and MCA companies near Project Stargate AI infrastructure nodes in Abilene TX, Saline MI, Port Washington WI, Columbus OH, and Albuquerque NM.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Company</th><th>City</th><th>State</th><th>Type</th>
+          <th>Secured Party</th><th>Score</th><th>Nearest Node</th><th>Days to Lapse</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in activity %}
+        <tr>
+          <td>{{ item.company_name }}</td>
+          <td>{{ item.city }}</td>
+          <td>{{ item.state }}</td>
+          <td>{{ item.lien_type }}</td>
+          <td>{{ item.secured_party }}</td>
+          <td>{{ item.propensity_score }}</td>
+          <td>{{ item.nearest_node }}</td>
+          <td>{{ item.days_to_lapse }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p>Browse full directory: <a href="/leads">Stargate CapEx Company Directory</a> &middot; <a href="/leads?tier=priority">Priority Companies</a> &middot; <a href="/leads?node=abilene">Abilene TX</a> &middot; <a href="/leads?node=saline">Saline MI</a></p>
+  </div>
+
+</body>
+</html>
