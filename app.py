@@ -212,60 +212,113 @@ User-agent: Brave-Search
 Allow: /
 
 Sitemap: https://stargatecapex.com/sitemap.xml
-Sitemap: https://stargatecapex.com/sitemap-leads.xml
+Sitemap: https://stargatecapex.com/sitemap-static.xml
 """
     return Response(txt, mimetype='text/plain')
 
 
 @app.route('/sitemap.xml')
 def sitemap():
-    xml = """<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    """Sitemap index — lists all child company sitemaps."""
+    conn = get_db()
+    total = conn.execute('SELECT COUNT(*) FROM stargate_leads').fetchone()[0]
+    conn.close()
+    today = datetime.utcnow().strftime('%Y-%m-%d')
+    import math
+    per_page = 5000
+    num_children = math.ceil(total / per_page)
 
+    child_refs = ''.join(
+        f"""
+  <sitemap>
+    <loc>https://stargatecapex.com/sitemap-child-{i+1}.xml</loc>
+    <lastmod>{today}</lastmod>
+  </sitemap>"""
+        for i in range(num_children)
+    )
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{child_refs}
+</sitemapindex>"""
+    return Response(xml, mimetype='application/xml')
+
+
+@app.route('/sitemap-static.xml')
+def sitemap_static():
+    """Static pages sitemap."""
+    today = datetime.utcnow().strftime('%Y-%m-%d')
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://stargatecapex.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <lastmod>{today}</lastmod>
   </url>
-
   <url>
     <loc>https://stargatecapex.com/leads</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
     <lastmod>{today}</lastmod>
   </url>
-
   <url>
-    <loc>https://stargatecapex.com/api/stats</loc>
-    <changefreq>hourly</changefreq>
-    <priority>0.5</priority>
+    <loc>https://stargatecapex.com/leads?tier=priority</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <lastmod>{today}</lastmod>
   </url>
-
-</urlset>""".format(today=datetime.utcnow().strftime('%Y-%m-%d'))
+  <url>
+    <loc>https://stargatecapex.com/leads?node=abilene</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/leads?node=columbus</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/leads?node=albuquerque</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+</urlset>"""
     return Response(xml, mimetype='application/xml')
 
 
-@app.route('/sitemap-leads.xml')
-def sitemap_leads():
+@app.route('/sitemap-child-<int:page>.xml')
+def sitemap_child(page):
+    """Paginated company sitemaps — 5000 per page covering all 16k+ companies."""
+    per_page = 5000
+    offset = (page - 1) * per_page
     conn = get_db()
     rows = conn.execute(
-        "SELECT company_name, state, nearest_node FROM stargate_leads ORDER BY propensity_score DESC LIMIT 2000"
+        'SELECT company_name, city, state FROM stargate_leads ORDER BY propensity_score DESC LIMIT ? OFFSET ?',
+        (per_page, offset)
     ).fetchall()
     conn.close()
+
+    if not rows:
+        from flask import abort
+        abort(404)
+
     today = datetime.utcnow().strftime('%Y-%m-%d')
+    from urllib.parse import quote_plus
     items = ''
     for r in rows:
-        name = str(r['company_name'] or '').replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
+        name = str(r['company_name'] or '')
+        search_q = quote_plus(name)
         items += f"""
   <url>
-    <loc>https://stargatecapex.com/leads?search={name.replace(' ','+')}</loc>
+    <loc>https://stargatecapex.com/leads?search={search_q}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <lastmod>{today}</lastmod>
   </url>"""
+
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{items}
 </urlset>"""
