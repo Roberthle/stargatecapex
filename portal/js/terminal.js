@@ -181,22 +181,22 @@ function volFromAge(ageMonths) {
 
 function pillsHTML(match, lienType) {
   const pills = [];
-  pills.push(`<span class="pill pill-ucc">✓ UCC</span>`);
-  if (lienType === 'blanket') pills.push(`<span class="pill pill-mca">💰 MCA</span>`);
+  pills.push(`<span class="pill pill-ucc">UCC</span>`);
+  if (lienType === 'blanket') pills.push(`<span class="pill pill-mca">MCA</span>`);
 
   const cats = match?.cats || [];
   const MAP = {
-    construction: ['🏗️','construction','pill-construction'],
-    power:        ['⚡','Power',       'pill-power'],
-    cooling:      ['❄️','Cooling',      'pill-cooling'],
-    fiber:        ['🌐','Fiber/IT',     'pill-fiber'],
-    heavy_equipment:['🏗️','Heavy Equip','pill-heavy'],
-    manufacturing:['⚙️','Mfg',         'pill-mfg'],
+    construction: ['','construction','pill-construction'],
+    power:        ['','Power',       'pill-power'],
+    cooling:      ['','Cooling',      'pill-cooling'],
+    fiber:        ['','Fiber/IT',     'pill-fiber'],
+    heavy_equipment:['','Heavy Equip','pill-heavy'],
+    manufacturing:['','Mfg',         'pill-mfg'],
   };
   cats.forEach(c => {
     if (MAP[c]) {
       const [icon, label, cls] = MAP[c];
-      pills.push(`<span class="pill ${cls}">${icon} ${label}</span>`);
+      pills.push(`<span class="pill ${cls}">${label}</span>`);
     }
   });
   return pills.slice(0,5).join('');
@@ -342,7 +342,7 @@ document.addEventListener('click', e => {
   }
   document.querySelectorAll('th.sorted').forEach(t => t.classList.remove('sorted'));
   th.classList.add('sorted');
-  $('sort-info').textContent = `Sorted by ${col.replace(/_/g,' ')} ${state.sortDir === 'desc' ? '↓' : '↑'}`;
+  $('sort-info').textContent = `Sorted by ${col.replace(/_/g,' ')} (${state.sortDir})`;
   loadLeads();
 });
 

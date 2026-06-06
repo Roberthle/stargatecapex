@@ -527,12 +527,14 @@ STATE_MAP = {
     'illinois':      ('IL',  'ILLINOIS'),
     'utah':          ('UT',  'UTAH'),
     'oklahoma':      ('OK',  'OKLAHOMA'),
+    'michigan':      ('MI',  'MICHIGAN'),
 }
 
 NODE_MAP = {
     'abilene':     ('Abilene Campus',  'Abilene, TX'),
     'albuquerque': ('ABQ Campus',      'Albuquerque, NM'),
     'columbus':    ('Columbus Campus', 'Columbus, OH'),
+    'saline':      ('The Barn (Saline)', 'Saline, MI'),
 }
 
 # City map: slug -> (display_name, state_name, db_variants, intro)
@@ -657,6 +659,9 @@ STATE_INTROS = {
     'oklahoma': (
         "Oklahoma-based steel fabricators, power engineers, and civil contractors support the Stargate computing corridor. Track Oklahoma companies with live UCC-1 records to capture new equipment leasing and refinance cycles."
     ),
+    'michigan': (
+        "Michigan and 'The Barn' compute node in Saline represent a massive expansion point in the Project Stargate AI infrastructure supply corridor, backed by Related Digital and Blackstone's $16B–$56B data center investment. This directory indexes Michigan suppliers, contractors, and steel fabricators with active UCC-1 equipment financing records to capture high-intent local prospecting opportunities."
+    ),
 }
 
 NODE_INTROS = {
@@ -695,6 +700,9 @@ NODE_INTROS = {
         "this directory provides full business intelligence on every company: who they bank with, what they own, how their "
         "financing is structured, and their overall growth trajectory. "
         "Columbus is one of the most underprospected high-growth B2B markets in the country right now."
+    ),
+    'saline': (
+        "The Barn node in Saline, Michigan, represents a cornerstone compute campus in the Midwest Project Stargate network, powered by Related Digital and a massive $16B–$56B Blackstone investment. This directory indexes local suppliers, heavy haulers, electricians, and civil contractors operating within the immediate orbit of the Saline compute campus. Sales reps, lenders, and dealers use these ranked, scored company records to capture high-intent capital expenditure triggers and refinance cycles."
     ),
 }
 
