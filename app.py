@@ -530,12 +530,12 @@ site: https://stargatecapex.com
 # ── PROGRAMMATIC SEO: STATE + NODE LANDING PAGES ───────────────────────────────
 
 STATE_MAP = {
-    'georgia':     ('GA',  'Georgia'),
-    'colorado':    ('CO',  'Colorado'),
-    'connecticut': ('CT',  'Connecticut'),
-    'california':  ('CA',  'California'),
-    'texas':       ('TX',  'Texas'),
-    'montana':     ('MT',  'Montana'),
+    'georgia':     ('GA',  'GEORGIA'),
+    'colorado':    ('CO',  'COLORADO'),
+    'connecticut': ('CT',  'CONNECTICUT'),
+    'california':  ('CA',  'CALIFORNIA'),
+    'texas':       ('TX',  'TEXAS'),
+    'montana':     ('MT',  'MONTANA'),
 }
 
 NODE_MAP = {
