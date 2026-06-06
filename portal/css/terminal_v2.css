@@ -930,19 +930,19 @@ input, textarea, select, [contenteditable] {
 }
 .sg-tam-eyebrow {
   font-family: 'D-DIN', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2.5px;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 3px;
   color: var(--cyan);
   display: block;
   margin-bottom: 10px;
 }
 .sg-tam-title {
   font-family: 'D-DIN', sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 1.75rem;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   color: var(--white-100);
   margin-bottom: 16px;
   margin-top: 0;
@@ -985,15 +985,17 @@ input, textarea, select, [contenteditable] {
   margin-bottom: 14px;
 }
 .sg-tam-card-icon {
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  height: 20px;
 }
 .sg-tam-card-title {
   font-family: 'D-DIN', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 500;
   color: var(--white-100);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   margin: 0;
 }
 .sg-tam-card-text {
