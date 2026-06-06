@@ -353,6 +353,62 @@ def sitemap_static():
     <priority>0.7</priority>
     <lastmod>{today}</lastmod>
   </url>
+  <!-- City landing pages -->
+  <url>
+    <loc>https://stargatecapex.com/companies/city/denver</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/city/colorado-springs</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/city/aurora</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/city/englewood</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <!-- Blog pages -->
+  <url>
+    <loc>https://stargatecapex.com/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/blog/who-is-building-project-stargate</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/blog/project-stargate-abilene-campus</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/blog/ucc-data-sales-prospecting-stargate</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/blog/project-stargate-state-by-state-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>
 </urlset>"""
     return Response(xml, mimetype='application/xml')
 
@@ -542,6 +598,30 @@ NODE_MAP = {
     'abilene':     ('Abilene Campus',  'Abilene, TX'),
     'albuquerque': ('ABQ Campus',      'Albuquerque, NM'),
     'columbus':    ('Columbus Campus', 'Columbus, OH'),
+}
+
+# City map: slug -> (display_name, state_name, db_variants, intro)
+CITY_MAP = {
+    'denver': (
+        'Denver', 'Colorado',
+        ['DENVER', 'Denver'],
+        "Denver, Colorado is the largest city in the Project Stargate AI infrastructure supply corridor — home to over 900 companies with active UCC-1 equipment financing records in our database. As the economic hub of the Rocky Mountain region, Denver-based contractors, technology vendors, construction operators, and specialty service firms are deeply embedded in the Stargate supply ecosystem. Whether you're a salesperson, recruiter, lender, equipment vendor, SaaS company, or any B2B business wanting to reach Denver companies in the Stargate build — this directory gives you ranked, scored intelligence on every company: who their lender is, what equipment they own, when their financing matures, and how fast they're growing. Denver represents one of the highest-density concentrations of high-growth B2B prospecting targets in the Rocky Mountain West."
+    ),
+    'colorado-springs': (
+        'Colorado Springs', 'Colorado',
+        ['COLORADO SPRINGS', 'Colorado Springs'],
+        "Colorado Springs is a major hub for aerospace, defense, and construction companies active in the Project Stargate AI infrastructure supply ecosystem. With over 500 companies holding active UCC-1 equipment financing records in our database, Colorado Springs businesses — spanning construction, specialty manufacturing, logistics, and technology services — represent high-value B2B prospecting targets for any vendor, lender, recruiter, or salesperson wanting to reach the Stargate supply chain in Colorado. The Colorado Springs metro has one of the highest concentrations of aerospace and defense contractors in the US, many of whom are now pivoting capacity toward AI infrastructure projects. This directory gives you ranked, scored intelligence on every Colorado Springs company in our database."
+    ),
+    'aurora': (
+        'Aurora', 'Colorado',
+        ['AURORA', 'Aurora'],
+        "Aurora, Colorado is a rapidly growing industrial and commercial hub adjacent to Denver, with over 400 companies holding active UCC-1 equipment financing records in the Stargate CapEx database. Aurora-based contractors, logistics operators, construction firms, and specialty vendors are active participants in the $500B Stargate AI infrastructure buildout supply chain. For any B2B business — salespeople, lenders, equipment dealers, recruiters, SaaS vendors, insurance agents, or specialty contractors — wanting to reach Aurora companies in the Stargate ecosystem, this directory provides ranked, scored business intelligence on every company: financing stage, lender relationships, equipment type, and growth trajectory."
+    ),
+    'englewood': (
+        'Englewood', 'Colorado',
+        ['ENGLEWOOD', 'Englewood'],
+        "Englewood, Colorado is home to over 240 companies with active UCC-1 equipment financing records in the Stargate CapEx database — specialty contractors, technology vendors, construction operators, and equipment-intensive businesses that are part of the broader Denver metro Stargate supply corridor. For salespeople, lenders, vendors, and B2B businesses wanting to reach Englewood companies in the AI infrastructure ecosystem, this directory provides full business intelligence: propensity scoring, lender relationships, financing maturity, and equipment collateral data."
+    ),
 }
 
 STATE_INTROS = {
@@ -885,6 +965,198 @@ def leads_page():
     return html
 
 
+@app.route('/companies/city/<city_slug>')
+def city_page(city_slug):
+    """SEO landing page for Stargate companies by city."""
+    if city_slug not in CITY_MAP:
+        abort(404)
+    city_name, state_name, db_variants, page_intro = CITY_MAP[city_slug]
+
+    conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
+    placeholders = ','.join('?' for _ in db_variants)
+    rows = conn.execute(
+        f'''SELECT id, company_name, city, state, lien_type, filing_date, lapse_date,
+                   days_to_lapse, secured_party, propensity_score, collateral
+            FROM stargate_leads
+            WHERE city IN ({placeholders})
+            ORDER BY propensity_score DESC LIMIT 500''',
+        db_variants
+    ).fetchall()
+    conn.close()
+    companies = [dict(r) for r in rows]
+
+    h1 = f'Project Stargate Companies in {city_name}, {state_name}'
+    page_title = f'Stargate Companies {city_name} {state_name} — {len(companies):,} Company Records | Stargate CapEx'
+    page_desc = f'Browse {len(companies):,} companies in {city_name}, {state_name} with active UCC-1 equipment financing in the Project Stargate AI infrastructure ecosystem. Ranked by propensity score. Business intelligence for lenders, vendors, and B2B salespeople.'
+    canonical = f'https://stargatecapex.com/companies/city/{city_slug}'
+
+    return render_template('index.html',
+        companies=companies,
+        activity=companies,
+        page_title=page_title,
+        page_desc=page_desc,
+        page_h1=h1,
+        page_intro=page_intro,
+        canonical=canonical,
+        filter_label=f'{len(companies):,} companies in {city_name}, {state_name}',
+    )
+
+
+# ── BLOG ─────────────────────────────────────────────────────────────────────
+
+STARGATE_BLOG_POSTS = [
+    {
+        'slug': 'who-is-building-project-stargate',
+        'title': 'Who Is Building Project Stargate? The Complete Company Intelligence Guide',
+        'date': '2026-06-06',
+        'excerpt': 'Project Stargate is a $500 billion AI infrastructure investment — but who actually builds it? Here is the complete guide to the contractors, vendors, and companies in the Stargate supply chain.',
+        'body': '''<p>Project Stargate is the most ambitious AI infrastructure investment in American history — a $500 billion commitment from OpenAI, SoftBank, Oracle, and a consortium of technology and investment partners to build AI data centers across the United States. But who actually builds it? The contractors, fabricators, power vendors, construction operators, and specialty service companies that form the Stargate supply chain are largely invisible to the public — and enormously valuable to every salesperson, vendor, and business wanting to reach them.</p>
+
+<h2>What Is Project Stargate?</h2>
+<p>Project Stargate was announced in January 2025, with an initial commitment of $100 billion scaling to $500 billion over four years. The buildout centers on AI compute infrastructure — massive data centers housing hundreds of thousands of NVIDIA processors, connected by high-speed fiber networks, cooled by industrial-scale systems, and powered by dedicated electrical infrastructure. The scale is unprecedented: individual campuses are projected to consume as much power as mid-sized cities.</p>
+
+<h2>The Three Primary Campuses</h2>
+<p><strong>Abilene, TX (Primary Campus):</strong> The flagship Stargate hub, anchored by OpenAI. Over 100,000 AI servers are planned, making this the largest single concentration of AI compute infrastructure in the United States. West Texas was selected for available land, proximity to power infrastructure, and favorable regulatory environment.</p>
+<p><strong>Columbus, OH (Midwest Node):</strong> Ohio&#39;s manufacturing heritage, skilled construction workforce, and central logistics position make Columbus ideal for Stargate&#39;s Midwest compute hub. The Columbus campus draws contractors and vendors from Ohio, Indiana, Michigan, and Kentucky.</p>
+<p><strong>Albuquerque, NM (Southwest Node):</strong> Oracle and NVIDIA are primary technology partners for the ABQ campus, which serves the Southwest region of Stargate&#39;s distributed AI compute network. New Mexico&#39;s energy infrastructure and land availability drove the site selection.</p>
+
+<h2>What Industries Supply the Build?</h2>
+<p>The Stargate supply chain spans a wide range of industries that most people don&#39;t associate with AI:</p>
+<ul>
+<li><strong>Heavy civil construction</strong> — site preparation, foundations, structural steel, concrete work</li>
+<li><strong>Electrical engineering</strong> — power distribution systems, transformer installation, high-voltage infrastructure</li>
+<li><strong>Mechanical and HVAC</strong> — industrial cooling systems for AI hardware that generates enormous heat loads</li>
+<li><strong>Technology vendors</strong> — fiber cabling, networking equipment, server installation and configuration</li>
+<li><strong>Logistics operators</strong> — moving billions of dollars in hardware to remote build sites on tight schedules</li>
+<li><strong>Specialty contractors</strong> — waterproofing, fire suppression, security systems, backup power</li>
+</ul>
+
+<h2>Who Are the Companies?</h2>
+<p>The Stargate supply chain companies are not household names. They are mid-market contractors and specialty vendors — typically doing $5 million to $500 million in annual revenue — operating under subcontract agreements with the general contractors managing each campus build. Many of them are the same companies that built hyperscale data centers for Amazon, Google, and Microsoft over the past decade, now pivoting capacity toward the Stargate build.</p>
+<p>These companies are identified through UCC-1 equipment financing filings — public records that reveal what equipment a company owns, who their lender is, and when their financing matures. The Stargate CapEx Intelligence Terminal aggregates these records for companies in the Stargate supply ecosystem, ranked by propensity score and filtered by state, node, and city.</p>
+
+<h2>How to Find Stargate Companies</h2>
+<p>For any business wanting to reach companies in the Stargate supply chain — whether you sell software, provide specialty services, offer equipment financing, deliver staffing solutions, or want to win subcontracts — the Stargate CapEx Intelligence Terminal is your starting point.</p>
+<p>Browse by state: <a href="/companies/state/texas">Texas</a> &middot; <a href="/companies/state/georgia">Georgia</a> &middot; <a href="/companies/state/colorado">Colorado</a> &middot; <a href="/companies/state/connecticut">Connecticut</a> &middot; <a href="/companies/state/california">California</a> &middot; <a href="/companies/state/montana">Montana</a></p>
+<p>Browse by campus: <a href="/companies/node/abilene">Abilene Campus</a> &middot; <a href="/companies/node/columbus">Columbus Campus</a> &middot; <a href="/companies/node/albuquerque">Albuquerque Campus</a></p>'''
+    },
+    {
+        'slug': 'project-stargate-abilene-campus',
+        'title': 'Project Stargate Abilene Campus: Every Contractor and Vendor in the Build',
+        'date': '2026-06-06',
+        'excerpt': 'The Abilene Campus is the flagship Project Stargate data center hub in West Texas — the largest single AI compute investment in US history. Here is everything you need to know about who is building it.',
+        'body': '''<p>The Abilene Campus is the crown jewel of Project Stargate — OpenAI&#39;s primary $500 billion AI data center hub in West Texas, and the largest single concentration of AI compute infrastructure in the United States. Understanding who builds it, supplies it, and services it is essential for any business wanting to reach the Stargate supply chain.</p>
+
+<h2>Why Abilene?</h2>
+<p>The selection of Abilene, Texas as Stargate&#39;s flagship campus was driven by several factors: abundant cheap land in the West Texas plains, access to the Texas power grid (ERCOT), proximity to natural gas and wind energy infrastructure, and a favorable regulatory environment. The campus is projected to eventually house over 100,000 NVIDIA AI processors, with construction phased over four years starting in 2025.</p>
+
+<h2>The Scale of the Build</h2>
+<p>The Abilene Campus build is not a single data center — it is a campus of multiple interconnected facilities, each housing racks of AI servers cooled by industrial systems drawing as much power as a small city. The power infrastructure alone requires dedicated transmission lines and potentially new generating capacity. Construction requires:</p>
+<ul>
+<li>Millions of square feet of raised-floor data center space</li>
+<li>High-voltage electrical distribution systems capable of delivering hundreds of megawatts</li>
+<li>Industrial cooling infrastructure handling heat loads that dwarf conventional office buildings</li>
+<li>High-speed dark fiber connecting the campus to backbone internet exchange points</li>
+<li>Physical security infrastructure and access control systems</li>
+<li>Backup power systems including diesel generators and battery storage</li>
+</ul>
+
+<h2>The Supply Chain</h2>
+<p>The Abilene Campus supply chain draws primarily from Texas-based contractors and vendors, supplemented by specialty firms from across the US. Texas companies in the Stargate CapEx database include heavy civil contractors from Houston and San Antonio, electrical engineering firms from Dallas, HVAC specialists from Austin, and logistics operators from across the state.</p>
+<p>Many of these companies have active UCC-1 equipment financing records — public filings that reveal what equipment they own, who finances it, and when their agreements mature. This data is the foundation of the Stargate CapEx Intelligence Terminal, which ranks all Abilene-area Stargate companies by propensity score.</p>
+
+<h2>Who Should Be Prospecting the Abilene Build?</h2>
+<p>The Abilene Campus represents one of the most concentrated B2B opportunity clusters in the country right now:</p>
+<ul>
+<li><strong>Equipment vendors</strong> — construction, HVAC, electrical, and logistics equipment dealers</li>
+<li><strong>Software companies</strong> — project management, fleet tracking, ERP, and field service software vendors</li>
+<li><strong>Lenders and finance companies</strong> — equipment financing, construction lending, working capital</li>
+<li><strong>Staffing and recruiting firms</strong> — the Abilene build requires thousands of skilled tradespeople</li>
+<li><strong>Insurance agents</strong> — equipment-heavy contractors need specialized coverage</li>
+<li><strong>Subcontractors</strong> — specialty firms looking to work under the primary contractors</li>
+</ul>
+
+<h2>Browse Abilene Campus Companies</h2>
+<p>The Stargate CapEx Intelligence Terminal has <a href="/companies/node/abilene">the complete directory of companies near the Abilene Campus</a>, ranked by propensity score and filterable by lien type, financing maturity, and secured party. Start prospecting the Abilene build today.</p>'''
+    },
+    {
+        'slug': 'ucc-data-sales-prospecting-stargate',
+        'title': 'How Any Business Can Use Stargate CapEx Data to Find New Clients',
+        'date': '2026-06-06',
+        'excerpt': 'The Stargate CapEx Intelligence Terminal is not just for lenders. Any B2B salesperson, vendor, recruiter, or business wanting to reach companies in the $500B AI infrastructure build can use our data.',
+        'body': '''<p>Most people assume business intelligence databases like the Stargate CapEx Intelligence Terminal are only for equipment lenders or finance companies. That assumption is wrong — and costly. The UCC-1 data and propensity signals in our database are valuable to every business that sells B2B.</p>
+
+<h2>What the Data Actually Tells You</h2>
+<p>Every company record in the Stargate CapEx database contains:</p>
+<ul>
+<li><strong>Company name and location</strong> — who they are and where they operate</li>
+<li><strong>Secured party (lender)</strong> — who finances their equipment, revealing banking relationships</li>
+<li><strong>Collateral description</strong> — what equipment they own (excavators, generators, network hardware, vehicles, CNC machines, etc.)</li>
+<li><strong>Filing and lapse dates</strong> — when they entered their financing agreement and when it expires</li>
+<li><strong>Propensity score</strong> — our model&#39;s prediction of how likely they are to be evaluating new business relationships right now</li>
+<li><strong>Score tier</strong> — hot, warm, or cold classification for prioritization</li>
+</ul>
+
+<h2>Who Can Use This Data (Beyond Lenders)</h2>
+<p><strong>Software and SaaS companies:</strong> Companies with active equipment financing are growing businesses actively managing capital assets. They buy fleet tracking software, ERP systems, field service management tools, accounting software, and dozens of other SaaS products. The collateral description tells you exactly what kind of equipment they run, so you can target with relevant messaging.</p>
+<p><strong>Staffing and recruiting firms:</strong> Companies filing new UCC-1 agreements are adding capacity — and adding employees. High propensity-score companies in the Stargate ecosystem are actively hiring skilled tradespeople, project managers, engineers, and operations staff.</p>
+<p><strong>Insurance agents and brokers:</strong> Equipment-heavy contractors need specialized coverage: inland marine, equipment breakdown, contractor general liability, workers&#39; comp. The collateral description tells you exactly what coverage conversations to have.</p>
+<p><strong>Specialty subcontractors:</strong> Looking to win work on the Stargate build? The companies in our database include the prime contractors and specialty subs that are managing the Abilene, Columbus, and Albuquerque campus builds. Finding them, understanding their financial profile, and reaching out at the right time is how subcontractors win new work.</p>
+<p><strong>Commercial real estate brokers:</strong> Companies with maturing equipment financing are often expanding facilities. High-propensity companies in the Stargate corridor are actively evaluating new locations for operations, fabrication, and staging yards.</p>
+<p><strong>Any B2B salesperson:</strong> The propensity score and score tier tell you which companies are most receptive to outreach right now — not in six months. A &quot;hot&quot; tier company with a lapsing financing agreement in the Stargate corridor is a business in active decision-making mode.</p>
+
+<h2>How to Start</h2>
+<p>Browse the Stargate CapEx database by state or campus node, filter by score tier, and start with the highest-propensity companies in your target geography. Each company record gives you the business intelligence you need to make a relevant, timely first contact.</p>
+<p>Browse by state: <a href="/companies/state/texas">Texas</a> &middot; <a href="/companies/state/colorado">Colorado</a> &middot; <a href="/companies/state/georgia">Georgia</a> &middot; <a href="/companies/state/connecticut">Connecticut</a></p>
+<p>Browse by campus: <a href="/companies/node/abilene">Abilene</a> &middot; <a href="/companies/node/columbus">Columbus</a> &middot; <a href="/companies/node/albuquerque">Albuquerque</a></p>'''
+    },
+    {
+        'slug': 'project-stargate-state-by-state-guide',
+        'title': 'Project Stargate: State-by-State Company Intelligence Guide',
+        'date': '2026-06-06',
+        'excerpt': 'The $500B Project Stargate AI infrastructure build spans multiple states. Here is the complete state-by-state breakdown of companies in the Stargate supply chain, with business intelligence on each market.',
+        'body': '''<p>Project Stargate&#39;s $500 billion AI infrastructure buildout is a national initiative — drawing contractors, vendors, and specialty companies from across the United States. Understanding the geographic distribution of the Stargate supply chain is essential for any business wanting to reach these companies. Here is the complete state-by-state breakdown.</p>
+
+<h2>Texas — The Primary Build State</h2>
+<p>Texas anchors the Stargate build, home to the flagship Abilene Campus and the McGregor test site. Texas-based contractors and vendors in the Stargate CapEx database include heavy civil construction firms from Houston and San Antonio, electrical engineering companies from Dallas, and logistics operators from across the state. The Texas Stargate ecosystem is the most active and highest-opportunity market for vendors and salespeople wanting to reach Stargate supply chain companies. <a href="/companies/state/texas">Browse Texas Stargate companies &rarr;</a></p>
+
+<h2>Georgia — The Largest State Dataset</h2>
+<p>Georgia has the largest population of companies in our Stargate CapEx database — nearly 4,000 active UCC-1 equipment financing records. Georgia&#39;s industrial corridor, anchored by Atlanta&#39;s commercial base and Savannah&#39;s port and logistics infrastructure, provides a dense supply of contractors, fabricators, and specialty vendors active in the Stargate ecosystem. <a href="/companies/state/georgia">Browse Georgia Stargate companies &rarr;</a></p>
+
+<h2>Colorado — The Front Range Corridor</h2>
+<p>Colorado&#39;s Front Range — from Fort Collins through Denver and Colorado Springs to Pueblo — is one of the most active states in the Stargate supply chain, with over 6,800 active company records in our database. Colorado&#39;s aerospace and defense heritage translates directly into Stargate supply chain capability. Denver, Colorado Springs, and Aurora are the key cities. <a href="/companies/state/colorado">Browse Colorado Stargate companies &rarr;</a> &middot; <a href="/companies/city/denver">Denver city directory &rarr;</a></p>
+
+<h2>Connecticut — Northeast Manufacturing Hub</h2>
+<p>Connecticut&#39;s advanced manufacturing ecosystem — built on aerospace, defense, and precision manufacturing — contributes nearly 4,000 companies to the Stargate supply chain. Hartford, Bridgeport, New Haven, and Stamford are the primary markets. <a href="/companies/state/connecticut">Browse Connecticut Stargate companies &rarr;</a></p>
+
+<h2>California — Technology and Specialty Vendors</h2>
+<p>California contributes technology suppliers, semiconductor vendors, and specialty contractors to the Stargate build. Over 800 California companies hold active UCC-1 equipment financing records in our database. Los Angeles, San Francisco, San Jose, and Sacramento are the primary markets. <a href="/companies/state/california">Browse California Stargate companies &rarr;</a></p>
+
+<h2>Montana — Rural Infrastructure Specialists</h2>
+<p>Montana-based contractors and equipment operators provide specialized rural infrastructure and construction services to the Stargate supply chain. Over 500 Montana companies are tracked in our database. <a href="/companies/state/montana">Browse Montana Stargate companies &rarr;</a></p>
+
+<h2>How to Use This Intelligence</h2>
+<p>The Stargate CapEx Intelligence Terminal gives any business or salesperson the ranked, scored company data needed to reach Stargate supply chain companies in any state. Each record shows propensity score, lender relationships, equipment type, and financing maturity — the intelligence you need to find the right company at the right time.</p>'''
+    },
+]
+
+
+@app.route('/blog')
+def blog_index():
+    return render_template('blog.html', posts=STARGATE_BLOG_POSTS, single_post=None,
+        page_title='Stargate CapEx Intelligence Blog — Project Stargate Company Research',
+        canonical='https://stargatecapex.com/blog')
+
+
+@app.route('/blog/<slug>')
+def blog_post(slug):
+    post = next((p for p in STARGATE_BLOG_POSTS if p['slug'] == slug), None)
+    if not post:
+        abort(404)
+    return render_template('blog.html', posts=STARGATE_BLOG_POSTS, single_post=post,
+        page_title=post['title'] + ' | Stargate CapEx',
+        canonical=f"https://stargatecapex.com/blog/{post['slug']}")
 
 
 if __name__ == '__main__':
