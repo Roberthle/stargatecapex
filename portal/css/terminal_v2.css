@@ -916,9 +916,116 @@ input, textarea, select, [contenteditable] {
   -webkit-touch-callout: default !important;
 }
 
+/* ── Stargate TAM Section ──────────────────────────────── */
+.sg-tam-section {
+  padding: 60px 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+.sg-tam-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.sg-tam-eyebrow {
+  font-family: 'D-DIN', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: var(--cyan);
+  display: block;
+  margin-bottom: 10px;
+}
+.sg-tam-title {
+  font-family: 'D-DIN', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--white-100);
+  margin-bottom: 16px;
+  margin-top: 0;
+}
+.sg-tam-title span {
+  color: var(--cyan);
+}
+.sg-tam-desc {
+  font-size: 0.95rem;
+  color: var(--white-60);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.sg-tam-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+.sg-tam-card {
+  background: rgba(8, 12, 20, 0.75);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--glow);
+  backdrop-filter: blur(20px);
+}
+.sg-tam-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 229, 255, 0.3);
+  box-shadow: 0 12px 30px rgba(0, 229, 255, 0.1);
+}
+.sg-tam-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.sg-tam-card-icon {
+  font-size: 20px;
+}
+.sg-tam-card-title {
+  font-family: 'D-DIN', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--white-100);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+.sg-tam-card-text {
+  font-size: 0.85rem;
+  color: var(--white-60);
+  line-height: 1.6;
+  flex-grow: 1;
+  margin: 0;
+}
+.sg-tam-card-footer {
+  margin-top: 18px;
+}
+.sg-tam-card-tag {
+  font-family: 'D-DIN', sans-serif;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--cyan);
+}
+
+@media (max-width: 768px) {
+  .sg-tam-section {
+    padding: 40px 20px;
+  }
+  .sg-tam-title {
+    font-size: 1.5rem;
+  }
+}
+
 /* ── Print/PDF Extraction Protection ──────────────────────────────────────── */
 @media print {
-  body, html, #data-section {
+  body, html, #data-section, .sg-tam-section {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
