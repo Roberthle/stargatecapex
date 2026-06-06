@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Stargate Capex Intelligence Terminal — UCC-1 equipment financing and MCA leads for contractors, suppliers, and vendors active in the $500B Project Stargate AI data center buildout across Texas, Michigan, Wisconsin, Ohio, and New Mexico." />
+  <meta name="description" content="{{ page_desc or 'Stargate Capex Intelligence Terminal — UCC-1 equipment financing and MCA leads for contractors, suppliers, and vendors active in the $500B Project Stargate AI data center buildout across Texas, Michigan, Wisconsin, Ohio, and New Mexico.' }}" />
   <meta name="keywords" content="Stargate Capex, Project Stargate companies, AI data center contractors, UCC-1 equipment filings, MCA companies, OpenAI Abilene, Oracle data center, equipment financing, B2B company intelligence" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://stargatecapex.com/" />
+  <link rel="canonical" href="{{ canonical or 'https://stargatecapex.com/' }}" />
 
   <meta property="og:url"         content="https://stargatecapex.com/" />
   <meta property="og:type"        content="website" />
@@ -23,7 +23,7 @@
   <!-- llms.txt and sitemap discovery -->
   <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
 
-  <title>Stargate Capex — AI Infrastructure UCC Company Directory | stargatecapex.com</title>
+  <title>{{ page_title or 'Stargate Capex — AI Infrastructure UCC Company Directory | stargatecapex.com' }}</title>
 
   <!-- JSON-LD -->
   <script type="application/ld+json">
@@ -86,9 +86,16 @@
     <div class="sg-hero-grid">
       <div class="sg-hero-content">
         <span class="sg-hero-eyebrow">Project Stargate — UCC Equipment & MCA Company Directory</span>
+        {% if page_h1 %}
+        <h1 class="sg-hero-title">{{ page_h1 }}</h1>
+        {% else %}
         <h1 class="sg-hero-title">
           Stargate <span>CapEx</span><br />Intelligence Terminal
         </h1>
+        {% endif %}
+        {% if filter_label %}
+        <p class="sg-hero-sub" style="font-size:1rem;opacity:0.8;">{{ filter_label }}</p>
+        {% endif %}
         <p class="sg-hero-sub">
           The definitive <strong>UCC-1 company directory</strong> for the <strong>$500B Project Stargate</strong> AI infrastructure corridor.
           Identify contractors, fabricators, power vendors, and equipment operators

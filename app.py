@@ -5,6 +5,7 @@ Runs on $PORT (Render) or 5052 (local)
 SEO: robots.txt, sitemap.xml, llms.txt, server-rendered /leads page
 """
 import os, sqlite3, json
+from flask import abort
 from datetime import datetime
 from flask import Response
 from flask import Flask, jsonify, request, send_from_directory, render_template
@@ -271,6 +272,63 @@ def sitemap_static():
     <priority>0.9</priority>
     <lastmod>{today}</lastmod>
   </url>
+  <!-- State landing pages -->
+  <url>
+    <loc>https://stargatecapex.com/companies/state/georgia</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/state/colorado</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/state/connecticut</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/state/california</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/state/texas</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/state/montana</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <!-- Node landing pages -->
+  <url>
+    <loc>https://stargatecapex.com/companies/node/abilene</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/node/albuquerque</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <url>
+    <loc>https://stargatecapex.com/companies/node/columbus</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>{today}</lastmod>
+  </url>
+  <!-- Legacy query-string pages -->
   <url>
     <loc>https://stargatecapex.com/leads?tier=priority</loc>
     <changefreq>daily</changefreq>
@@ -467,6 +525,90 @@ def llms_full_txt():
 site: https://stargatecapex.com
 """
     return Response(txt, mimetype='text/plain')
+
+
+# ── PROGRAMMATIC SEO: STATE + NODE LANDING PAGES ───────────────────────────────
+
+STATE_MAP = {
+    'georgia':     ('GA',  'Georgia'),
+    'colorado':    ('CO',  'Colorado'),
+    'connecticut': ('CT',  'Connecticut'),
+    'california':  ('CA',  'California'),
+    'texas':       ('TX',  'Texas'),
+    'montana':     ('MT',  'Montana'),
+}
+
+NODE_MAP = {
+    'abilene':     ('Abilene Campus',  'Abilene, TX'),
+    'albuquerque': ('ABQ Campus',      'Albuquerque, NM'),
+    'columbus':    ('Columbus Campus', 'Columbus, OH'),
+}
+
+
+@app.route('/companies/state/<state_slug>')
+def state_page(state_slug):
+    """SEO landing page for companies by state."""
+    if state_slug not in STATE_MAP:
+        abort(404)
+    state_code, state_name = STATE_MAP[state_slug]
+    conn = get_db()
+    rows = conn.execute(
+        '''SELECT company_name, city, state, secured_party, lien_type,
+                  propensity_score, nearest_node, days_to_lapse, filing_date
+           FROM stargate_leads
+           WHERE (state = ? OR state = ?)
+           ORDER BY propensity_score DESC LIMIT 500''',
+        (state_code, state_name)
+    ).fetchall()
+    conn.close()
+    companies = [dict(r) for r in rows]
+    page_title = f"Project Stargate AI Infrastructure Companies in {state_name} | Stargate CapEx"
+    page_desc  = (f"Browse {len(companies)} UCC-1 equipment financing companies in {state_name} "
+                  f"active in the Project Stargate $500B AI infrastructure build-out. "
+                  f"Ranked by propensity score.")
+    h1        = f"Project Stargate Companies in {state_name}"
+    canonical = f"https://stargatecapex.com/companies/state/{state_slug}"
+    return render_template('index.html',
+        activity=companies,
+        page_title=page_title,
+        page_desc=page_desc,
+        page_h1=h1,
+        canonical=canonical,
+        filter_label=f"{len(companies)} companies in {state_name}"
+    )
+
+
+@app.route('/companies/node/<node_slug>')
+def node_page(node_slug):
+    """SEO landing page for companies by Stargate node."""
+    if node_slug not in NODE_MAP:
+        abort(404)
+    node_name, node_location = NODE_MAP[node_slug]
+    conn = get_db()
+    rows = conn.execute(
+        '''SELECT company_name, city, state, secured_party, lien_type,
+                  propensity_score, nearest_node, days_to_lapse, filing_date
+           FROM stargate_leads
+           WHERE nearest_node = ?
+           ORDER BY propensity_score DESC LIMIT 500''',
+        (node_name,)
+    ).fetchall()
+    conn.close()
+    companies = [dict(r) for r in rows]
+    page_title = f"Project Stargate {node_location} Campus Companies | Stargate CapEx"
+    page_desc  = (f"Browse {len(companies)} UCC-1 equipment financing companies nearest the "
+                  f"Project Stargate {node_location} AI data center campus. "
+                  f"Ranked by propensity score.")
+    h1        = f"Project Stargate — {node_location} Campus Companies"
+    canonical = f"https://stargatecapex.com/companies/node/{node_slug}"
+    return render_template('index.html',
+        activity=companies,
+        page_title=page_title,
+        page_desc=page_desc,
+        page_h1=h1,
+        canonical=canonical,
+        filter_label=f"{len(companies)} companies near {node_location}"
+    )
 
 
 @app.route('/leads')
