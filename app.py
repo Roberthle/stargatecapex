@@ -214,7 +214,10 @@ Allow: /
 Sitemap: https://stargatecapex.com/sitemap.xml
 Sitemap: https://stargatecapex.com/sitemap-static.xml
 """
-    return Response(txt, mimetype='text/plain')
+    resp = Response(txt, mimetype='text/plain')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    resp.headers['Pragma'] = 'no-cache'
+    return resp
 
 
 @app.route('/sitemap.xml')
