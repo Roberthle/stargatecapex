@@ -363,7 +363,7 @@
       let visitId = null;
       let lastPingTime = Date.now();
 
-      fetch('https://www.tomcatregistry.com/api/analytics/visit', {
+      fetch('https://tomcatregistry.com/api/analytics/visit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(visitData)
@@ -386,7 +386,7 @@
               const delta = Math.round((now - lastPingTime) / 1000);
               if (delta > 0) {
                   lastPingTime = now;
-                  fetch('https://www.tomcatregistry.com/api/analytics/ping', {
+                  fetch('https://tomcatregistry.com/api/analytics/ping', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ visit_id: visitId, duration: delta })
@@ -413,9 +413,9 @@
                   lastPingTime = now;
                   const blob = new Blob([JSON.stringify({ visit_id: visitId, duration: delta })], { type: 'application/json' });
                   if (navigator.sendBeacon) {
-                      navigator.sendBeacon('https://www.tomcatregistry.com/api/analytics/ping', blob);
+                      navigator.sendBeacon('https://tomcatregistry.com/api/analytics/ping', blob);
                   } else {
-                      fetch('https://www.tomcatregistry.com/api/analytics/ping', {
+                      fetch('https://tomcatregistry.com/api/analytics/ping', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({ visit_id: visitId, duration: delta }),
