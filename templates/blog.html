@@ -7,6 +7,26 @@
   <meta name="description" content="{% if single_post %}{{ single_post.excerpt }}{% else %}Project Stargate AI infrastructure supply chain research. Guides, analysis, and contractor directories.{% endif %}" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="{{ canonical }}" />
+  {% if single_post and faq_data %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {% for faq in faq_data %}
+      {
+        "@type": "Question",
+        "name": {{ faq.question|tojson }},
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": {{ faq.answer|tojson }}
+        }
+      }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ]
+  }
+  </script>
+  {% endif %}
   <link rel="stylesheet" href="/css/terminal_v2.css" />
   <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin />
   <link href="https://fonts.cdnfonts.com/css/d-din" rel="stylesheet" />
@@ -354,6 +374,26 @@
         <div class="article-content">
           {{ single_post.body|safe }}
         </div>
+        
+        {% if faq_data %}
+        <div class="blog-faq-wrap" style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px;">
+          <h3 style="font-family: 'D-DIN', sans-serif; font-size: 1.25rem; font-weight: 700; color: #ffffff; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.5px;">Frequently Asked Questions</h3>
+          
+          {% for faq in faq_data %}
+          <div class="sg-faq-item" style="border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px; padding-bottom: 12px;">
+            <details style="cursor: pointer;">
+              <summary style="font-family: 'D-DIN', sans-serif; font-size: 0.95rem; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; list-style: none; display: flex; justify-content: space-between; align-items: center; outline: none; user-select: none;">
+                <span>{{ faq.question }}</span>
+                <span style="color: var(--cyan); font-weight: 300;">+</span>
+              </summary>
+              <div style="margin-top: 8px; font-size: 0.85rem; line-height: 1.6; color: rgba(255,255,255,0.6); cursor: default;" onclick="event.stopPropagation()">
+                <p>{{ faq.answer }}</p>
+              </div>
+            </details>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
       </main>
 
       <aside class="sidebar">

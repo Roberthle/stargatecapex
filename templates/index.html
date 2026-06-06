@@ -25,17 +25,28 @@
 
   <title>{{ page_title or 'Stargate Capex — AI Infrastructure UCC Company Directory | stargatecapex.com' }}</title>
 
-  <!-- JSON-LD -->
+  </script>
+
+  {% if faq_data %}
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Stargate Capex Intelligence Terminal",
-    "applicationCategory": "BusinessApplication",
-    "description": "UCC-1 equipment financing and MCA lead terminal for the Project Stargate AI infrastructure buildout. Tracks contractors, fabricators, and vendors across TX, MI, WI, OH, NM Stargate nodes.",
-    "offers": { "@type": "Offer", "priceCurrency": "USD", "price": "0" }
+    "@type": "FAQPage",
+    "mainEntity": [
+      {% for faq in faq_data %}
+      {
+        "@type": "Question",
+        "name": {{ faq.question|tojson }},
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": {{ faq.answer|tojson }}
+        }
+      }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ]
   }
   </script>
+  {% endif %}
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin />
@@ -106,10 +117,10 @@
         </p>
         <div class="sg-hero-btns">
           <button class="sg-btn sg-btn-primary" onclick="document.getElementById('data-section').scrollIntoView({behavior:'smooth'})" id="open-terminal-btn">
-            ⚡ Open Terminal
+            Open Terminal
           </button>
           <button class="sg-btn sg-btn-outline" onclick="document.getElementById('data-section').scrollIntoView({behavior:'smooth'})" id="view-leads-btn">
-            📊 View Companies
+            View Companies
           </button>
         </div>
       </div>
@@ -354,59 +365,18 @@
     <section class="sg-faq-section" aria-label="Frequently Asked Questions">
       <h2 class="sg-faq-title">Frequently Asked Questions</h2>
 
-      <div class="sg-faq-item">
-        <details>
-          <summary>What is Stargate Capex?</summary>
-          <div class="sg-faq-content">
-            <p>Stargate Capex is a public company directory and UCC-1 intelligence terminal tracking contractors, equipment operators, fabricators, and logistics vendors active in the $500 billion Project Stargate AI infrastructure buildout. It indexes public UCC-1 filings from state Secretary of State databases and cross-references them against proximity to active Stargate construction nodes across Texas, Michigan, Wisconsin, Ohio, and New Mexico.</p>
-          </div>
-        </details>
-      </div>
-
-      <div class="sg-faq-item">
-        <details>
-          <summary>How does the propensity scoring work?</summary>
-          <div class="sg-faq-content">
-            <p>Each company is scored on a 0–100 scale using a multi-weighted algorithm combining: days remaining until UCC-1 lapse (urgency), distance to the nearest Stargate node (proximity), keyword relevance to core supply chain categories (construction, power, cooling, fiber, heavy equipment), lien type (equipment liens score higher), and filing age (the 24–36 month window is the peak refinance sweet spot). Higher scores indicate companies most likely to be in the market for new equipment financing today.</p>
-          </div>
-        </details>
-      </div>
-
-      <div class="sg-faq-item">
-        <details>
-          <summary>What are the five Project Stargate nodes?</summary>
-          <div class="sg-faq-content">
-            <p>The five active Stargate node locations tracked in this terminal are: <strong>Abilene Campus</strong> (Abilene, TX — the flagship 200MW OpenAI/Oracle facility, already operational), <strong>The Barn</strong> (Saline, MI — a $16B facility by Related Digital &amp; Blackstone, breaking ground now), <strong>Lighthouse</strong> (Port Washington, WI — ~1GW target, 2028 delivery), <strong>Columbus Campus</strong> (Columbus, OH — planned), and <strong>ABQ Campus</strong> (Albuquerque, NM — planned). Each company listing shows its distance in km to the nearest node.</p>
-          </div>
-        </details>
-      </div>
-
-      <div class="sg-faq-item">
-        <details>
-          <summary>Where does the UCC-1 data come from?</summary>
-          <div class="sg-faq-content">
-            <p>Data is sourced daily from public UCC-1 Uniform Commercial Code financing statements filed with state Secretary of State offices, including GA, CO, CA, CT, ID, MT, TX, MI, WI, OH, and NM. UCC-1 filings are public commercial records documenting secured financing relationships between businesses and lenders. All data displayed is a matter of public record.</p>
-          </div>
-        </details>
-      </div>
-
-      <div class="sg-faq-item">
-        <details>
-          <summary>Can I claim my company profile or correct a listing?</summary>
-          <div class="sg-faq-content">
-            <p>Yes. Business owners whose companies appear in this directory can request corrections, suppressions, or profile updates via our CCPA opt-out gateway. This is a public directory of commercial UCC records — it is not a consumer report and does not contain personal credit data. To request a correction or suppression, contact us at <a href="mailto:rob@salesagentic.ai" style="color:var(--cyan)">rob@salesagentic.ai</a>.</p>
-          </div>
-        </details>
-      </div>
-
-      <div class="sg-faq-item">
-        <details>
-          <summary>What categories of companies are tracked?</summary>
-          <div class="sg-faq-content">
-            <p>Stargate Capex tracks six core Stargate supply chain categories: <strong>Construction &amp; Civil</strong> (contractors, excavation, concrete, structural steel, grading), <strong>Power &amp; Electrical</strong> (electricians, substations, generators, transformers, UPS systems, solar), <strong>Mechanical &amp; Cooling</strong> (HVAC, chillers, air handling, refrigeration, plumbing), <strong>Fiber &amp; IT Infrastructure</strong> (fiber, cabling, networking, telecommunications, data center services), <strong>Heavy Equipment &amp; Logistics</strong> (cranes, rigging, flatbed hauling, excavators, forklifts), and <strong>Manufacturing &amp; Fabrication</strong> (steel fab, metalwork, welding, machining, industrial assembly).</p>
-          </div>
-        </details>
-      </div>
+      {% if faq_data %}
+        {% for faq in faq_data %}
+        <div class="sg-faq-item">
+          <details>
+            <summary>{{ faq.question }}</summary>
+            <div class="sg-faq-content">
+              <p>{{ faq.answer }}</p>
+            </div>
+          </details>
+        </div>
+        {% endfor %}
+      {% endif %}
     </section>
 
     <!-- Full Footer -->

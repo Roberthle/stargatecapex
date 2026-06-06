@@ -29,6 +29,21 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+DEFAULT_STARGATE_FAQS = [
+    {
+        "question": "What is the Project Stargate CapEx Terminal?",
+        "answer": "The Stargate CapEx Terminal is a company directory and business intelligence platform indexing contractors, fabricators, and power suppliers active in the $500B Project Stargate AI infrastructure corridor."
+    },
+    {
+        "question": "How are companies scored on the terminal?",
+        "answer": "Companies are scored based on their proximity to active Stargate computing nodes (Abilene TX, Columbus OH, Albuquerque NM) and the maturity of their UCC-1 equipment financing statements."
+    },
+    {
+        "question": "Where is the UCC filing database sourced from?",
+        "answer": "Our database compiles public filings from state Secretary of State offices across GA, CO, CT, CA, TX, MT, ID, NY, MA, NJ, AZ, FL, WY, IL, UT, OK."
+    }
+]
+
 @app.route('/')
 def index():
     """Serve homepage — inject top companies as SSR for Google indexing."""
@@ -44,7 +59,7 @@ def index():
         activity = [dict(r) for r in rows]
     except Exception:
         activity = []
-    return render_template('index.html', activity=activity)
+    return render_template('index.html', activity=activity, faq_data=DEFAULT_STARGATE_FAQS)
 
 @app.route('/api/stats')
 def api_stats():
@@ -258,6 +273,43 @@ def sitemap():
 def sitemap_static():
     """Static pages sitemap."""
     today = datetime.utcnow().strftime('%Y-%m-%d')
+    
+    state_urls = ""
+    for slug in STATE_MAP.keys():
+        state_urls += f"""  <url>
+    <loc>https://stargatecapex.com/companies/state/{slug}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>{today}</lastmod>
+  </url>\n"""
+
+    node_urls = ""
+    for slug in NODE_MAP.keys():
+        node_urls += f"""  <url>
+    <loc>https://stargatecapex.com/companies/node/{slug}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>{today}</lastmod>
+  </url>\n"""
+
+    city_urls = ""
+    for slug in CITY_MAP.keys():
+        city_urls += f"""  <url>
+    <loc>https://stargatecapex.com/companies/city/{slug}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>\n"""
+
+    blog_urls = ""
+    for post in STARGATE_BLOG_POSTS:
+        blog_urls += f"""  <url>
+    <loc>https://stargatecapex.com/blog/{post['slug']}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>{today}</lastmod>
+  </url>\n"""
+
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -273,143 +325,16 @@ def sitemap_static():
     <lastmod>{today}</lastmod>
   </url>
   <!-- State landing pages -->
-  <url>
-    <loc>https://stargatecapex.com/companies/state/georgia</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/state/colorado</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/state/connecticut</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/state/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/state/texas</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/state/montana</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <!-- Node landing pages -->
-  <url>
-    <loc>https://stargatecapex.com/companies/node/abilene</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/node/albuquerque</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/node/columbus</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <!-- Legacy query-string pages -->
-  <url>
-    <loc>https://stargatecapex.com/leads?tier=priority</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/leads?node=abilene</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/leads?node=columbus</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/leads?node=albuquerque</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <!-- City landing pages -->
-  <url>
-    <loc>https://stargatecapex.com/companies/city/denver</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/city/colorado-springs</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/city/aurora</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/companies/city/englewood</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <!-- Blog pages -->
+{state_urls}  <!-- Node landing pages -->
+{node_urls}  <!-- City landing pages -->
+{city_urls}  <!-- Blog index and posts -->
   <url>
     <loc>https://stargatecapex.com/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <lastmod>{today}</lastmod>
   </url>
-  <url>
-    <loc>https://stargatecapex.com/blog/who-is-building-project-stargate</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/blog/project-stargate-abilene-campus</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/blog/ucc-data-sales-prospecting-stargate</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-  <url>
-    <loc>https://stargatecapex.com/blog/project-stargate-state-by-state-guide</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-    <lastmod>{today}</lastmod>
-  </url>
-</urlset>"""
+{blog_urls}</urlset>"""
     return Response(xml, mimetype='application/xml')
 
 
@@ -586,12 +511,22 @@ site: https://stargatecapex.com
 # ── PROGRAMMATIC SEO: STATE + NODE LANDING PAGES ───────────────────────────────
 
 STATE_MAP = {
-    'georgia':     ('GA',  'GEORGIA'),
-    'colorado':    ('CO',  'COLORADO'),
-    'connecticut': ('CT',  'CONNECTICUT'),
-    'california':  ('CA',  'CALIFORNIA'),
-    'texas':       ('TX',  'TEXAS'),
-    'montana':     ('MT',  'MONTANA'),
+    'georgia':       ('GA',  'GEORGIA'),
+    'colorado':      ('CO',  'COLORADO'),
+    'connecticut':   ('CT',  'CONNECTICUT'),
+    'california':    ('CA',  'CALIFORNIA'),
+    'texas':         ('TX',  'TEXAS'),
+    'montana':       ('MT',  'MONTANA'),
+    'idaho':         ('ID',  'IDAHO'),
+    'new-york':      ('NY',  'NEW YORK'),
+    'massachusetts': ('MA',  'MASSACHUSETTS'),
+    'new-jersey':    ('NJ',  'NEW JERSEY'),
+    'arizona':       ('AZ',  'ARIZONA'),
+    'florida':       ('FL',  'FLORIDA'),
+    'wyoming':       ('WY',  'WYOMING'),
+    'illinois':      ('IL',  'ILLINOIS'),
+    'utah':          ('UT',  'UTAH'),
+    'oklahoma':      ('OK',  'OKLAHOMA'),
 }
 
 NODE_MAP = {
@@ -692,6 +627,36 @@ STATE_INTROS = {
         "signals. Montana companies, while fewer in number, often represent niche high-value relationships in the Stargate "
         "supply chain — exactly the kind of underprospected targets that savvy B2B salespeople find first."
     ),
+    'idaho': (
+        "Idaho is an emerging hub in the Project Stargate AI infrastructure supply corridor, providing key resources in construction, transport, and raw materials. Our database tracks companies across Boise, Idaho Falls, and Coeur d'Alene with active UCC-1 equipment financing records, offering critical prospecting data for outbound B2B teams."
+    ),
+    'new-york': (
+        "New York plays a major role in the Project Stargate supply chain, delivering advanced manufacturing, technology components, and financial operations. This directory indexes New York suppliers with active UCC-1 financing statements, helping B2B vendors locate prime sales opportunities at exactly the right time."
+    ),
+    'massachusetts': (
+        "Massachusetts contributes advanced engineering, technology research, and electronics manufacturing to the Stargate AI infrastructure corridor. Outbound sales reps can browse Massachusetts companies with live UCC-1 records to target expanding tech suppliers."
+    ),
+    'new-jersey': (
+        "New Jersey is a vital logistics, distribution, and manufacturing node for the Stargate AI infrastructure build. This directory tracks Jersey-based suppliers and contractors with active UCC-1 equipment financing, providing ranked business intelligence for B2B prospecting."
+    ),
+    'arizona': (
+        "Arizona hosts critical components of the Stargate Southwest compute network, specializing in precision fabrication and power engineering. Our database ranks Arizona suppliers with active equipment financing records by propensity score."
+    ),
+    'florida': (
+        "Florida-based contractors, logistics carriers, and mechanical vendors are active participants in the Project Stargate compute corridor. This directory provides full intelligence on Florida companies with active UCC-1 statements, mapped to compute nodes."
+    ),
+    'wyoming': (
+        "Wyoming's energy infrastructure and construction sectors support the Project Stargate AI build corridor. This directory indexes Wyoming contractors and equipment operators with live UCC-1 records, scored by buying propensity."
+    ),
+    'illinois': (
+        "Illinois represents a central manufacturing and power distribution node for the Midwest Stargate campus network. Prospect local suppliers in Chicago and the industrial corridors with active UCC-1 equipment financing."
+    ),
+    'utah': (
+        "Utah is a fast-growing tech and manufacturing corridor supporting Stargate compute sites. This directory indexes Utah contractors and engineering firms with active UCC-1 equipment financing."
+    ),
+    'oklahoma': (
+        "Oklahoma-based steel fabricators, power engineers, and civil contractors support the Stargate computing corridor. Track Oklahoma companies with live UCC-1 records to capture new equipment leasing and refinance cycles."
+    ),
 }
 
 NODE_INTROS = {
@@ -733,6 +698,33 @@ NODE_INTROS = {
     ),
 }
 
+def get_state_faqs(state_name, state_code):
+    return [
+        {
+            "question": f"What is the Project Stargate supply network in {state_name}?",
+            "answer": f"The {state_name} Stargate supply network consists of local civil contractors, electric power vendors, HVAC engineers, and logistics carriers in {state_name} ({state_code}) with active UCC-1 filings."
+        },
+        {
+            "question": f"How do B2B reps prospect Stargate suppliers in {state_name}?",
+            "answer": f"Sales reps use {state_name} UCC-1 data to trace equipment replacement dates, lender relationships, and target accounts when they are closest to buying windows."
+        },
+        {
+            "question": "What computing nodes are closest to this state?",
+            "answer": "Project Stargate compute campuses are located in Abilene TX, Columbus OH, and Albuquerque NM, with suppliers feeding in nationwide."
+        }
+    ]
+
+def get_node_faqs(node_name, node_location):
+    return [
+        {
+            "question": f"What is the Project Stargate {node_name}?",
+            "answer": f"The {node_name} is a major computing campus located in {node_location}, housing advanced AI data centers as part of the $500B Stargate network."
+        },
+        {
+            "question": f"Who are the contractors building the {node_name}?",
+            "answer": f"Contractors near the {node_name} include civil engineering companies, heavy riggers, backup power providers, and high-performance fiber installers."
+        }
+    ]
 
 @app.route('/companies/state/<state_slug>')
 def state_page(state_slug):
@@ -745,9 +737,9 @@ def state_page(state_slug):
         '''SELECT company_name, city, state, secured_party, lien_type,
                   propensity_score, nearest_node, days_to_lapse, filing_date
            FROM stargate_leads
-           WHERE (state = ? OR state = ?)
+           WHERE (UPPER(state) = ? OR UPPER(state) = ?)
            ORDER BY propensity_score DESC LIMIT 500''',
-        (state_code, state_name)
+        (state_code.upper(), state_name.upper())
     ).fetchall()
     conn.close()
     companies = [dict(r) for r in rows]
@@ -764,7 +756,8 @@ def state_page(state_slug):
         page_h1=h1,
         canonical=canonical,
         filter_label=f"{len(companies)} companies in {state_name}",
-        page_intro=STATE_INTROS.get(state_slug, '')
+        page_intro=STATE_INTROS.get(state_slug, ''),
+        faq_data=get_state_faqs(state_name, state_code)
     )
 
 
@@ -798,7 +791,8 @@ def node_page(node_slug):
         page_h1=h1,
         canonical=canonical,
         filter_label=f"{len(companies)} companies near {node_location}",
-        page_intro=NODE_INTROS.get(node_slug, '')
+        page_intro=NODE_INTROS.get(node_slug, ''),
+        faq_data=get_node_faqs(node_name, node_location)
     )
 
 
@@ -1000,6 +994,7 @@ def city_page(city_slug):
         page_intro=page_intro,
         canonical=canonical,
         filter_label=f'{len(companies):,} companies in {city_name}, {state_name}',
+        faq_data=get_state_faqs(city_name, state_name)
     )
 
 
@@ -1142,6 +1137,49 @@ STARGATE_BLOG_POSTS = [
 ]
 
 
+STARGATE_BLOG_FAQS = {
+    'who-is-building-project-stargate': [
+        {
+            "question": "Who is building Project Stargate?",
+            "answer": "Project Stargate is a $500B AI compute initiative built by a distributed supply chain of civil contractors, power engineers, HVAC specialists, and logistics providers."
+        },
+        {
+            "question": "How are Stargate suppliers identified?",
+            "answer": "Suppliers are tracked through active UCC-1 filings (equipment financing and MCA liens) and geocoded based on proximity to active computing nodes."
+        }
+    ],
+    'project-stargate-abilene-campus': [
+        {
+            "question": "What is the Abilene Campus in Project Stargate?",
+            "answer": "The Abilene Campus is OpenAI's flagship $500 billion data center hub in West Texas, projected to consume hundreds of megawatts of power."
+        },
+        {
+            "question": "Why was Abilene chosen for the flagship hub?",
+            "answer": "Abilene offers abundant land, favorable local regulation, and close proximity to major ERCOT power transmission infrastructure."
+        }
+    ],
+    'ucc-data-sales-prospecting-stargate': [
+        {
+            "question": "How can sales teams use Stargate CapEx data?",
+            "answer": "B2B sales reps track maturing UCC-1 filings to identify when contractors are entering their peak capital equipment replacement or refinancing windows."
+        },
+        {
+            "question": "What business signals are contained in UCC filings?",
+            "answer": "Every record contains the borrowing company's name, lender, description of financed equipment, filing date, and propensity score."
+        }
+    ],
+    'project-stargate-state-by-state-guide': [
+        {
+            "question": "Where are Project Stargate suppliers located?",
+            "answer": "Stargate suppliers are active nationwide, with major clusters in Georgia, Colorado, Connecticut, California, and Texas."
+        },
+        {
+            "question": "Which state has the largest number of Stargate-connected companies?",
+            "answer": "Georgia and Colorado represent the highest concentrations of Stargate-relevant companies in our UCC-1 database."
+        }
+    ]
+}
+
 @app.route('/blog')
 def blog_index():
     return render_template('blog.html', posts=STARGATE_BLOG_POSTS, single_post=None,
@@ -1154,9 +1192,11 @@ def blog_post(slug):
     post = next((p for p in STARGATE_BLOG_POSTS if p['slug'] == slug), None)
     if not post:
         abort(404)
+    faq_data = STARGATE_BLOG_FAQS.get(slug, [])
     return render_template('blog.html', posts=STARGATE_BLOG_POSTS, single_post=post,
         page_title=post['title'] + ' | Stargate CapEx',
-        canonical=f"https://stargatecapex.com/blog/{post['slug']}")
+        canonical=f"https://stargatecapex.com/blog/{post['slug']}",
+        faq_data=faq_data)
 
 
 if __name__ == '__main__':
