@@ -544,6 +544,112 @@ NODE_MAP = {
     'columbus':    ('Columbus Campus', 'Columbus, OH'),
 }
 
+STATE_INTROS = {
+    'georgia': (
+        "Georgia ranks among the most active states for UCC-1 equipment financing tied to the Project Stargate AI "
+        "infrastructure corridor. With nearly 4,000 active financing statements tracked in our database, Georgia-based "
+        "contractors, fabricators, and equipment operators represent a major segment of the $500B Stargate buildout "
+        "ecosystem. Companies across Atlanta, Savannah, Augusta, and surrounding metro areas are actively financing "
+        "heavy construction equipment, power generation systems, and data center infrastructure — with many of those "
+        "financing agreements now maturing, opening prime windows for new CapEx decisions. The Stargate CapEx "
+        "Intelligence Terminal scores each Georgia company daily using propensity modeling built on UCC-1 lien data, "
+        "geographic proximity to active Stargate build sites, and equipment financing maturity signals. Lenders, "
+        "vendors, and equipment dealers use this terminal to identify Georgia businesses that are actively evaluating "
+        "new capital equipment purchases right now."
+    ),
+    'colorado': (
+        "Colorado is one of the highest-volume states for UCC-1 equipment financing in the Project Stargate AI "
+        "infrastructure network, with over 6,800 active financing statements tracked across the state. Colorado-based "
+        "companies — particularly along the Front Range corridor from Fort Collins through Denver to Colorado Springs — "
+        "are heavily represented in the Stargate supply ecosystem, providing construction services, power systems, and "
+        "technology infrastructure to the $500B AI data center build. Many of these companies financed heavy equipment "
+        "between 2022 and 2024, meaning their financing agreements are now maturing — the prime window for equipment "
+        "upgrades, fleet expansions, and new CapEx commitments. Our propensity model surfaces the highest-opportunity "
+        "Colorado companies daily, ranked by their likelihood to be actively evaluating new equipment financing based "
+        "on lapse proximity, lender relationships, and collateral type."
+    ),
+    'connecticut': (
+        "Connecticut is a key state for equipment financing and commercial lien activity connected to the Project "
+        "Stargate AI infrastructure build. With nearly 4,000 active UCC-1 financing statements tracked in our "
+        "database, Connecticut-based contractors, fabricators, and specialty vendors represent a significant portion "
+        "of the Stargate supply corridor serving the Northeast region. Connecticut companies — spanning Hartford, "
+        "Bridgeport, New Haven, and Stamford — have financed heavy machinery, tech infrastructure, and specialty "
+        "construction equipment through major commercial lenders, with many of those agreements now entering the "
+        "maturity window. The Stargate CapEx Intelligence Terminal aggregates and scores these Connecticut companies "
+        "daily, giving lenders and equipment dealers a ranked list of businesses most likely to be making new capital "
+        "equipment decisions right now."
+    ),
+    'california': (
+        "California represents a significant hub for technology suppliers and specialty contractors active in the "
+        "Project Stargate AI infrastructure ecosystem. With over 800 active UCC-1 equipment financing statements "
+        "tracked in our California database, companies from Los Angeles, San Francisco, San Jose, and Sacramento are "
+        "supplying advanced technology, semiconductors, power systems, and specialty construction services to the "
+        "$500B Stargate buildout. Many of these California companies financed high-value technology and equipment "
+        "between 2022 and 2024, with those financing agreements now maturing — signaling active CapEx evaluation "
+        "periods. The Stargate CapEx Intelligence Terminal ranks California companies by propensity score daily, "
+        "helping equipment dealers, lenders, and vendors identify which businesses are most likely to be purchasing "
+        "or financing new capital equipment right now."
+    ),
+    'texas': (
+        "Texas is ground zero for the Project Stargate AI infrastructure buildout, anchored by the Abilene Campus — "
+        "OpenAI's primary data center hub for the $500B initiative. Texas-based contractors, construction firms, "
+        "power vendors, and equipment operators are at the forefront of the Stargate supply chain, supporting massive "
+        "infrastructure development across Abilene, Dallas, Houston, and Austin. UCC-1 equipment financing filings "
+        "tracked in our Texas database represent companies actively involved in the Stargate ecosystem, from heavy "
+        "civil construction to specialized electrical and mechanical installation. The Stargate CapEx Intelligence "
+        "Terminal scores these Texas companies by their proximity to active build sites, equipment financing "
+        "maturity, and propensity to be evaluating new CapEx now — giving lenders and vendors a precision-targeted "
+        "list of the highest-opportunity businesses in the state."
+    ),
+    'montana': (
+        "Montana represents a growing presence in the UCC-1 equipment financing landscape connected to the Project "
+        "Stargate AI infrastructure network. With over 500 active financing statements tracked in our database, "
+        "Montana-based construction companies, equipment operators, and specialty contractors are part of the broader "
+        "supply ecosystem supporting the $500B Stargate build. Many Montana companies have financed heavy construction "
+        "equipment, vehicles, and specialized machinery through commercial lenders over the past three years, with "
+        "those agreements now entering maturity — creating prime windows for lenders and equipment dealers to engage. "
+        "The Stargate CapEx Intelligence Terminal surfaces Montana companies ranked by propensity score, helping "
+        "identify which businesses are most actively evaluating new capital equipment purchases based on their UCC-1 "
+        "financing history and lapse timelines."
+    ),
+}
+
+NODE_INTROS = {
+    'abilene': (
+        "The Abilene Campus is the flagship Project Stargate data center hub, anchoring OpenAI's $500B AI "
+        "infrastructure investment in West Texas. Located in Abilene, TX, this campus is projected to house over "
+        "100,000 AI servers and represents the largest single concentration of AI compute infrastructure in the "
+        "United States. The buildout requires a massive supply chain of construction contractors, electrical and "
+        "mechanical engineers, power vendors, cooling systems specialists, and heavy equipment operators — all "
+        "drawing from the broader Texas and Southwest US supplier base. The companies listed here represent UCC-1 "
+        "equipment financing filings nearest the Abilene Campus, ranked by propensity score. These are businesses "
+        "with maturing equipment financing agreements, actively evaluating new CapEx — making them prime targets "
+        "for lenders, equipment dealers, and vendors supplying the Stargate build."
+    ),
+    'albuquerque': (
+        "The Albuquerque Campus — referred to as the ABQ Campus in Project Stargate documentation — represents one "
+        "of the key regional AI data center nodes in the $500B Stargate infrastructure initiative. Located in "
+        "Albuquerque, New Mexico, this campus serves as the Southwest hub for Stargate's distributed AI compute "
+        "network, with Oracle and NVIDIA named as primary technology partners for infrastructure deployment. The "
+        "surrounding region provides a rich supply chain of construction contractors, power engineers, specialty "
+        "fabricators, and equipment operators actively financing heavy machinery and infrastructure assets. The "
+        "companies listed here hold active UCC-1 equipment financing agreements nearest the ABQ Campus, scored and "
+        "ranked daily by their propensity to be evaluating new capital equipment purchases — giving lenders and "
+        "vendors a precision-targeted lead list for the Albuquerque Stargate market."
+    ),
+    'columbus': (
+        "The Columbus Campus represents Project Stargate's Midwest node, positioning Columbus, Ohio as a major hub "
+        "in the $500B AI infrastructure network. Ohio's established manufacturing base, skilled construction "
+        "workforce, and central logistics position make Columbus an ideal location for large-scale AI data center "
+        "development. The Columbus Stargate campus draws from a deep regional supplier ecosystem spanning Ohio, "
+        "Indiana, Michigan, and Kentucky — including heavy civil contractors, electrical systems vendors, HVAC and "
+        "cooling specialists, and equipment finance companies with active UCC-1 filings. Companies listed here "
+        "represent the businesses with active equipment financing agreements nearest the Columbus Campus, ranked "
+        "daily by propensity score. Lenders, equipment dealers, and specialty vendors use this terminal to identify "
+        "Columbus-area businesses that are actively evaluating new capital equipment decisions right now."
+    ),
+}
+
 
 @app.route('/companies/state/<state_slug>')
 def state_page(state_slug):
@@ -574,7 +680,8 @@ def state_page(state_slug):
         page_desc=page_desc,
         page_h1=h1,
         canonical=canonical,
-        filter_label=f"{len(companies)} companies in {state_name}"
+        filter_label=f"{len(companies)} companies in {state_name}",
+        page_intro=STATE_INTROS.get(state_slug, '')
     )
 
 
@@ -607,7 +714,8 @@ def node_page(node_slug):
         page_desc=page_desc,
         page_h1=h1,
         canonical=canonical,
-        filter_label=f"{len(companies)} companies near {node_location}"
+        filter_label=f"{len(companies)} companies near {node_location}",
+        page_intro=NODE_INTROS.get(node_slug, '')
     )
 
 
