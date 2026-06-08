@@ -1251,5 +1251,5 @@ def blog_post(slug):
 
 
 if __name__ == '__main__':
-    print(f"🚀 Stargate Capex API — http://localhost:{PORT}")
+    print(f"[STARTUP] Stargate Capex API — http://localhost:{PORT}")
     app.run(host='0.0.0.0', port=PORT, debug=False)
