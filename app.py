@@ -1253,12 +1253,8 @@ def blog_post(slug):
 
 
 @app.route("/favicon.ico")
-def favicon():
-    from flask import redirect
-    return redirect("/apple-touch-icon.png")
-
 @app.route("/apple-touch-icon.png")
-def apple_touch_icon():
+def favicon():
     from flask import make_response
     try:
         with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "portal", "apple-touch-icon.png"), "rb") as f:
