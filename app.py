@@ -511,23 +511,56 @@ site: https://stargatecapex.com
 # ── PROGRAMMATIC SEO: STATE + NODE LANDING PAGES ───────────────────────────────
 
 STATE_MAP = {
-    'georgia':       ('GA',  'GEORGIA'),
+    'alabama':       ('AL',  'ALABAMA'),
+    'alaska':        ('AK',  'ALASKA'),
+    'arizona':       ('AZ',  'ARIZONA'),
+    'arkansas':      ('AR',  'ARKANSAS'),
+    'california':    ('CA',  'CALIFORNIA'),
     'colorado':      ('CO',  'COLORADO'),
     'connecticut':   ('CT',  'CONNECTICUT'),
-    'california':    ('CA',  'CALIFORNIA'),
-    'texas':         ('TX',  'TEXAS'),
-    'montana':       ('MT',  'MONTANA'),
-    'idaho':         ('ID',  'IDAHO'),
-    'new-york':      ('NY',  'NEW YORK'),
-    'massachusetts': ('MA',  'MASSACHUSETTS'),
-    'new-jersey':    ('NJ',  'NEW JERSEY'),
-    'arizona':       ('AZ',  'ARIZONA'),
+    'delaware':      ('DE',  'DELAWARE'),
     'florida':       ('FL',  'FLORIDA'),
-    'wyoming':       ('WY',  'WYOMING'),
+    'georgia':       ('GA',  'GEORGIA'),
+    'hawaii':        ('HI',  'HAWAII'),
+    'idaho':         ('ID',  'IDAHO'),
     'illinois':      ('IL',  'ILLINOIS'),
-    'utah':          ('UT',  'UTAH'),
-    'oklahoma':      ('OK',  'OKLAHOMA'),
+    'indiana':       ('IN',  'INDIANA'),
+    'iowa':          ('IA',  'IOWA'),
+    'kansas':        ('KS',  'KANSAS'),
+    'kentucky':      ('KY',  'KENTUCKY'),
+    'louisiana':     ('LA',  'LOUISIANA'),
+    'maine':         ('ME',  'MAINE'),
+    'maryland':      ('MD',  'MARYLAND'),
+    'massachusetts': ('MA',  'MASSACHUSETTS'),
     'michigan':      ('MI',  'MICHIGAN'),
+    'minnesota':     ('MN',  'MINNESOTA'),
+    'mississippi':   ('MS',  'MISSISSIPPI'),
+    'missouri':      ('MO',  'MISSOURI'),
+    'montana':       ('MT',  'MONTANA'),
+    'nebraska':      ('NE',  'NEBRASKA'),
+    'nevada':        ('NV',  'NEVADA'),
+    'new-hampshire': ('NH',  'NEW HAMPSHIRE'),
+    'new-jersey':    ('NJ',  'NEW JERSEY'),
+    'new-mexico':    ('NM',  'NEW MEXICO'),
+    'new-york':      ('NY',  'NEW YORK'),
+    'north-carolina':('NC',  'NORTH CAROLINA'),
+    'north-dakota':  ('ND',  'NORTH DAKOTA'),
+    'ohio':          ('OH',  'OHIO'),
+    'oklahoma':      ('OK',  'OKLAHOMA'),
+    'oregon':        ('OR',  'OREGON'),
+    'pennsylvania':  ('PA',  'PENNSYLVANIA'),
+    'rhode-island':  ('RI',  'RHODE ISLAND'),
+    'south-carolina':('SC',  'SOUTH CAROLINA'),
+    'south-dakota':  ('SD',  'SOUTH DAKOTA'),
+    'tennessee':     ('TN',  'TENNESSEE'),
+    'texas':         ('TX',  'TEXAS'),
+    'utah':          ('UT',  'UTAH'),
+    'vermont':       ('VT',  'VERMONT'),
+    'virginia':      ('VA',  'VIRGINIA'),
+    'washington':    ('WA',  'WASHINGTON'),
+    'west-virginia': ('WV',  'WEST VIRGINIA'),
+    'wisconsin':     ('WI',  'WISCONSIN'),
+    'wyoming':       ('WY',  'WYOMING'),
 }
 
 NODE_MAP = {
@@ -757,6 +790,16 @@ def state_page(state_slug):
                   f"Ranked by propensity score.")
     h1        = f"Project Stargate Companies in {state_name}"
     canonical = f"https://stargatecapex.com/companies/state/{state_slug}"
+    state_intro = STATE_INTROS.get(state_slug)
+    if not state_intro:
+        state_intro = (
+            f"{state_name.title()} ({state_code}) is an active region within the Project Stargate AI infrastructure supply chain corridor. "
+            f"This directory indexes local contractors, fabricators, logistics providers, and specialty vendors near Project Stargate nodes "
+            f"holding active UCC-1 equipment financing and commercial asset liens. Prospecting teams, alternative lenders, and equipment "
+            f"dealers use these ranked business intelligence records to identify active capital expenditures, track maturing credit lines, "
+            f"and connect with high-intent buyers across {state_name.title()}."
+        )
+
     return render_template('index.html',
         activity=companies,
         page_title=page_title,
@@ -764,7 +807,7 @@ def state_page(state_slug):
         page_h1=h1,
         canonical=canonical,
         filter_label=f"{len(companies)} companies in {state_name}",
-        page_intro=STATE_INTROS.get(state_slug, ''),
+        page_intro=state_intro,
         faq_data=get_state_faqs(state_name, state_code)
     )
 
