@@ -1261,7 +1261,7 @@ def favicon():
 def apple_touch_icon():
     from flask import make_response
     try:
-        with open("/Users/robertle/stargate_capex/portal/apple-touch-icon.png", "rb") as f:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "portal", "apple-touch-icon.png"), "rb") as f:
             return make_response(f.read(), 200, {"Content-Type": "image/png"})
     except Exception as e:
         return str(e), 404
