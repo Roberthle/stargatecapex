@@ -1250,6 +1250,22 @@ def blog_post(slug):
         faq_data=faq_data)
 
 
+
+
+@app.route("/favicon.ico")
+def favicon():
+    from flask import redirect
+    return redirect("/apple-touch-icon.png")
+
+@app.route("/apple-touch-icon.png")
+def apple_touch_icon():
+    from flask import make_response
+    try:
+        with open("/Users/robertle/stargate_capex/portal/apple-touch-icon.png", "rb") as f:
+            return make_response(f.read(), 200, {"Content-Type": "image/png"})
+    except Exception as e:
+        return str(e), 404
+
 if __name__ == '__main__':
     print(f"[STARTUP] Stargate Capex API — http://localhost:{PORT}")
     app.run(host='0.0.0.0', port=PORT, debug=False)
