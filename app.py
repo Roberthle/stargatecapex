@@ -292,8 +292,29 @@ def sitemap_static():
     <lastmod>{today}</lastmod>
   </url>\n"""
 
+    # Fetch top cities from DB dynamically
+    conn = get_db()
+    city_rows = conn.execute("SELECT city FROM stargate_leads WHERE city IS NOT NULL GROUP BY city ORDER BY COUNT(*) DESC LIMIT 200").fetchall()
+    conn.close()
+    
+    dynamic_city_slugs = []
+    for r in city_rows:
+        city_raw = r[0].strip()
+        if city_raw.isdigit() or len(city_raw) < 2:
+            continue
+        slug = city_raw.lower().replace(' ', '-')
+        if slug not in dynamic_city_slugs:
+            dynamic_city_slugs.append(slug)
+            if len(dynamic_city_slugs) >= 100:
+                break
+
+    all_city_slugs = list(CITY_MAP.keys())
+    for c_slug in dynamic_city_slugs:
+        if c_slug not in all_city_slugs:
+            all_city_slugs.append(c_slug)
+
     city_urls = ""
-    for slug in CITY_MAP.keys():
+    for slug in all_city_slugs:
         city_urls += f"""  <url>
     <loc>https://stargatecapex.com/companies/city/{slug}</loc>
     <changefreq>weekly</changefreq>
@@ -1013,22 +1034,58 @@ def leads_page():
 @app.route('/companies/city/<city_slug>')
 def city_page(city_slug):
     """SEO landing page for Stargate companies by city."""
-    if city_slug not in CITY_MAP:
-        abort(404)
-    city_name, state_name, db_variants, page_intro = CITY_MAP[city_slug]
-
     conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
-    placeholders = ','.join('?' for _ in db_variants)
-    rows = conn.execute(
-        f'''SELECT id, company_name, city, state, lien_type, filing_date, lapse_date,
-                   days_to_lapse, secured_party, propensity_score, collateral
-            FROM stargate_leads
-            WHERE city IN ({placeholders})
-            ORDER BY propensity_score DESC LIMIT 500''',
-        db_variants
-    ).fetchall()
-    conn.close()
+    
+    if city_slug in CITY_MAP:
+        city_name, state_name, db_variants, page_intro = CITY_MAP[city_slug]
+        placeholders = ','.join('?' for _ in db_variants)
+        rows = conn.execute(
+            f'''SELECT id, company_name, city, state, lien_type, filing_date, lapse_date,
+                       days_to_lapse, secured_party, propensity_score, collateral
+               FROM stargate_leads
+               WHERE city IN ({placeholders})
+               ORDER BY propensity_score DESC LIMIT 500''',
+            db_variants
+        ).fetchall()
+        conn.close()
+    else:
+        lead_ref = conn.execute(
+            'SELECT city, state FROM stargate_leads WHERE replace(lower(city), " ", "-") = ? LIMIT 1',
+            (city_slug,)
+        ).fetchone()
+        
+        if not lead_ref:
+            conn.close()
+            abort(404)
+            
+        city_name = lead_ref['city']
+        state_code = lead_ref['state']
+        
+        state_name = state_code
+        for s_slug, (s_code, s_name_upper) in STATE_MAP.items():
+            if s_code == state_code:
+                state_name = s_name_upper.title()
+                break
+                
+        db_variants = [city_name]
+        placeholders = '?'
+        rows = conn.execute(
+            f'''SELECT id, company_name, city, state, lien_type, filing_date, lapse_date,
+                       days_to_lapse, secured_party, propensity_score, collateral
+               FROM stargate_leads
+               WHERE city IN ({placeholders})
+               ORDER BY propensity_score DESC LIMIT 500''',
+            db_variants
+        ).fetchall()
+        conn.close()
+        
+        page_intro = (
+            f"{city_name}, {state_name} is a key industrial region within the Project Stargate AI infrastructure supply chain corridor. "
+            f"This directory indexes local civil contractors, fabrication shops, utility operators, and logistics providers holding active UCC-1 equipment financing and commercial asset liens. "
+            f"Prospecting teams, lenders, and B2B vendors use these ranked intelligence profiles to capture high-intent buyers, monitor maturing debt, and track local capital expenditures."
+        )
+        
     companies = [dict(r) for r in rows]
 
     h1 = f'Project Stargate Companies in {city_name}, {state_name}'
