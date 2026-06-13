@@ -8,7 +8,7 @@ import os, sqlite3, json
 from flask import abort
 from datetime import datetime
 from flask import Response
-from flask import Flask, jsonify, request, send_from_directory, render_template
+from flask import Flask, jsonify, request, send_from_directory, render_template, redirect
 
 app = Flask(__name__, static_folder='portal', static_url_path='', template_folder='templates')
 
@@ -17,11 +17,22 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB = os.path.join(BASE_DIR, 'leads', 'stargate_capex.db')
 PORT = int(os.environ.get('PORT', 5052))
 
+@app.before_request
+def redirect_www():
+    """Redirect www to non-www to enforce canonical domain."""
+    host = request.host
+    if host and host.startswith('www.'):
+        url = request.url.replace('https://www.', 'https://', 1).replace('http://www.', 'http://', 1)
+        return redirect(url, code=301)
+
 @app.after_request
 def add_security_headers(response):
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['Content-Security-Policy'] = "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';"
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
     return response
 
 def get_db():
