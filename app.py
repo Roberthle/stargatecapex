@@ -4,7 +4,7 @@ Stargate Capex — Flask API
 Runs on $PORT (Render) or 5052 (local)
 SEO: robots.txt, sitemap.xml, llms.txt, server-rendered /leads page
 """
-import os, sqlite3, json
+import os, sqlite3, json, html
 from flask import abort
 from datetime import datetime
 from flask import Response
@@ -68,7 +68,8 @@ def index():
         ).fetchall()
         conn.close()
         activity = [dict(r) for r in rows]
-    except Exception:
+    except Exception as e:
+        app.logger.error("Error loading homepage activity: %s", e)
         activity = []
     return render_template('index.html', activity=activity, faq_data=DEFAULT_STARGATE_FAQS)
 
@@ -127,7 +128,7 @@ def api_leads():
                      days_to_lapse, secured_party, collateral, lien_type,
                      nearest_node, nearest_node_id, node_dist_km, propensity_score,
                      stargate_match, source_state, source_db, phone, email,
-                     filing_age_months
+                     filing_age_months, is_suppressed
               FROM active_stargate_leads
               WHERE {" AND ".join(where)}
               ORDER BY {sort_col} {sort_dir}
@@ -145,6 +146,9 @@ def api_leads():
             d['stargate_match'] = json.loads(d['stargate_match'] or '{}')
         except:
             d['stargate_match'] = {}
+        if d.get('is_suppressed') == 1:
+            d['phone'] = '[SUPPRESSED]'
+            d['email'] = '[SUPPRESSED]'
         results.append(d)
 
     return jsonify(results)
@@ -415,7 +419,7 @@ def llms_txt():
         SUM(CASE WHEN lien_type="blanket" THEN 1 ELSE 0 END) mca
         FROM active_stargate_leads''').fetchone()
     top = conn.execute(
-        "SELECT company_name, city, state, nearest_node, propensity_score, lien_type FROM active_stargate_leads ORDER BY propensity_score DESC LIMIT 20"
+        "SELECT company_name, city, state, nearest_node, propensity_score, lien_type FROM active_stargate_leads ORDER BY propensity_score DESC LIMIT 5"
     ).fetchall()
     conn.close()
 
@@ -426,60 +430,41 @@ def llms_txt():
 
     txt = f"""# Stargate Capex
 
-> The definitive UCC-1 equipment financing and MCA lead intelligence terminal for the $500 billion Project Stargate AI data center buildout corridor.
+> UCC-1 equipment financing and MCA lead intelligence terminal for the $500B Project Stargate corridor.
 
-Stargate Capex tracks contractors, fabricators, power vendors, and equipment operators whose UCC-1 financing is maturing now — companies actively in the market for new capital. Leads are scored and ranked by proximity to active Stargate construction nodes across the United States.
+Tracks contractors and suppliers active near Project Stargate construction sites whose financing is maturing.
 
-## What This Site Does
+## Live Stats
 
-Stargate Capex indexes public UCC-1 filings (Uniform Commercial Code financing statements) from state Secretary of State databases and cross-references them against companies operating near Project Stargate AI infrastructure sites. It provides a scored, filtered terminal for B2B equipment financing and MCA (merchant cash advance) lead generation.
+- Leads: {stats['total']:,}
+- Priority: {stats['priority']:,}
+- Equipment: {stats['equipment']:,}
+- MCA: {stats['mca']:,}
 
-## Database Stats (Live)
+## Project Nodes
 
-- Total Stargate-relevant leads: {stats['total']:,}
-- Priority leads (score 85+): {stats['priority']:,}
-- Equipment liens: {stats['equipment']:,}
-- MCA / Blanket liens: {stats['mca']:,}
+- Abilene (TX), Saline (MI), Port Washington (WI), Columbus (OH), Albuquerque (NM)
 
-## Project Stargate Nodes Covered
+## Categories
 
-- **Abilene Campus** — Abilene, Texas (Live — 200MW, OpenAI/Oracle flagship)
-- **The Barn** — Saline, Michigan ($16B, Related Digital / Blackstone)
-- **Lighthouse** — Port Washington, Wisconsin (2028, ~1GW, Vantage Data Centers)
-- **Columbus Campus** — Columbus, Ohio (Planned)
-- **ABQ Campus** — Albuquerque, New Mexico (Planned)
+- Construction & Civil, Power & Electrical, Mechanical & Cooling, Fiber & IT, Heavy Equipment, Manufacturing
 
-## Lead Categories
-
-Leads are matched against these Stargate supply chain keyword categories:
-- Construction & Civil (contractors, excavating, concrete, structural steel, grading)
-- Power & Electrical (electricians, substations, generators, transformers, UPS, solar)
-- Mechanical & Cooling (HVAC, chillers, refrigeration, air handling, plumbing)
-- Fiber & IT Infrastructure (fiber, cabling, networking, telecommunications, data center)
-- Heavy Equipment & Logistics (cranes, rigging, flatbed trucking, excavators)
-- Manufacturing & Fabrication (steel fab, metal, welding, machining)
-
-## Top Priority Leads (Sample)
+## Top Leads (Sample)
 
 {top_list}
 
 ## API Endpoints
 
-- GET /api/stats — Returns total lead counts by tier and type
-- GET /api/leads — Returns filtered leads (params: min_score, tier, node, state, lien_type, search)
-- GET /api/nodes — Returns lead counts by Stargate node
-- GET /api/states — Returns lead counts by state
-- GET /leads — Server-rendered HTML version of lead database
-
-## Data Sources
-
-Public UCC-1 filings from state Secretary of State offices (GA, CO, CA, CT, ID, MT, TX, MI, WI, OH, NM). Data is for informational and lead generation purposes only.
-
-## Contact
+- GET /api/stats - Stats summary
+- GET /api/leads - Filtered leads (params: min_score, node, state, lien_type)
+- GET /leads - HTML database view
 
 site: https://stargatecapex.com
 """
-    return Response(txt, mimetype='text/plain')
+    resp = Response(txt, mimetype='text/plain')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    resp.headers['Pragma'] = 'no-cache'
+    return resp
 
 
 @app.route('/llms-full.txt')
@@ -537,7 +522,10 @@ def llms_full_txt():
 
 site: https://stargatecapex.com
 """
-    return Response(txt, mimetype='text/plain')
+    resp = Response(txt, mimetype='text/plain')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    resp.headers['Pragma'] = 'no-cache'
+    return resp
 
 
 # ── PROGRAMMATIC SEO: STATE + NODE LANDING PAGES ───────────────────────────────
@@ -908,7 +896,7 @@ def leads_page():
     rows = conn.execute(
         f'''SELECT company_name, city, state, days_to_lapse, lapse_date, secured_party,
                    collateral, lien_type, nearest_node, node_dist_km, propensity_score,
-                   stargate_match, phone, email, filing_date
+                   stargate_match, phone, email, filing_date, is_suppressed
             FROM active_stargate_leads WHERE {" AND ".join(where)}
             ORDER BY propensity_score DESC LIMIT ? OFFSET ?''',
         params + [per_page, offset]
@@ -928,18 +916,36 @@ def leads_page():
         except: pass
         cats = ', '.join(match.get('cats', [])).title()
         kws  = ', '.join(match.get('kws', [])[:5])
-        phone_html = f'<a href="tel:{r["phone"]}">{r["phone"]}</a>' if r['phone'] else '—'
-        email_html = f'<a href="mailto:{r["email"]}">{r["email"]}</a>' if r['email'] else '—'
+        
+        # HTML Escaping to prevent stored/reflected XSS
+        company_name_escaped = html.escape(str(r['company_name'] or ''))
+        city_escaped = html.escape(str(r['city'] or ''))
+        state_escaped = html.escape(str(r['state'] or ''))
+        lien_type_escaped = html.escape(str(r['lien_type'] or '')).title()
+        secured_party_escaped = html.escape(str(r['secured_party'] or '—'))
+        days_to_lapse_val = str(r['days_to_lapse']) if r['days_to_lapse'] is not None else '—'
+        days_to_lapse_escaped = html.escape(days_to_lapse_val)
+        lapse_date_escaped = html.escape(str(r['lapse_date'] or '—'))
+        nearest_node_escaped = html.escape(str(r['nearest_node'] or ''))
+        cats_escaped = html.escape(cats)
+        
+        if r['is_suppressed'] == 1:
+            phone_html = '<span style="color:#a1a1aa; font-style:italic;">[SUPPRESSED - CCPA Opt-Out]</span>'
+            email_html = '<span style="color:#a1a1aa; font-style:italic;">[SUPPRESSED - CCPA Opt-Out]</span>'
+        else:
+            phone_html = f'<a href="tel:{html.escape(r["phone"])}">{html.escape(r["phone"])}</a>' if r['phone'] else '—'
+            email_html = f'<a href="mailto:{html.escape(r["email"])}">{html.escape(r["email"])}</a>' if r['email'] else '—'
+
         rows_html += f"""
         <tr>
-          <td><strong>{r['company_name']}</strong><br><small>{r['city']}, {r['state']}</small></td>
-          <td>{r['lien_type'].title()}</td>
-          <td>{r['secured_party'] or '—'}</td>
-          <td>{r['days_to_lapse'] or '—'} days</td>
-          <td>{r['lapse_date'] or '—'}</td>
+          <td><strong>{company_name_escaped}</strong><br><small>{city_escaped}, {state_escaped}</small></td>
+          <td>{lien_type_escaped}</td>
+          <td>{secured_party_escaped}</td>
+          <td>{days_to_lapse_escaped} days</td>
+          <td>{lapse_date_escaped}</td>
           <td>{tier_label(r['propensity_score'])} ({r['propensity_score']})</td>
-          <td>{r['nearest_node']}<br><small>{round(r['node_dist_km'] or 0)} km</small></td>
-          <td>{cats}</td>
+          <td>{nearest_node_escaped}<br><small>{round(r['node_dist_km'] or 0)} km</small></td>
+          <td>{cats_escaped}</td>
           <td>{phone_html}</td>
           <td>{email_html}</td>
         </tr>"""
