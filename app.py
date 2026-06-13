@@ -52,7 +52,7 @@ def index():
         rows = conn.execute(
             '''SELECT company_name, city, state, secured_party, lien_type,
                       propensity_score, nearest_node, days_to_lapse, filing_date
-               FROM stargate_leads
+               FROM active_stargate_leads
                ORDER BY propensity_score DESC LIMIT 25'''
         ).fetchall()
         conn.close()
@@ -71,7 +71,7 @@ def api_stats():
         SUM(CASE WHEN propensity_score>=40 AND propensity_score<65 THEN 1 ELSE 0 END) monitor,
         SUM(CASE WHEN lien_type="equipment" THEN 1 ELSE 0 END) equipment,
         SUM(CASE WHEN lien_type="blanket"   THEN 1 ELSE 0 END) mca
-        FROM stargate_leads''').fetchone()
+        FROM active_stargate_leads''').fetchone()
     conn.close()
     return jsonify(dict(r) if r else {})
 
@@ -117,7 +117,7 @@ def api_leads():
                      nearest_node, nearest_node_id, node_dist_km, propensity_score,
                      stargate_match, source_state, source_db, phone, email,
                      filing_age_months
-              FROM stargate_leads
+              FROM active_stargate_leads
               WHERE {" AND ".join(where)}
               ORDER BY {sort_col} {sort_dir}
               LIMIT ?'''
@@ -142,7 +142,7 @@ def api_leads():
 def api_nodes():
     conn = get_db()
     rows = conn.execute('''SELECT nearest_node, nearest_node_id, COUNT(*) cnt
-                           FROM stargate_leads
+                           FROM active_stargate_leads
                            GROUP BY nearest_node_id
                            ORDER BY cnt DESC''').fetchall()
     conn.close()
@@ -152,7 +152,7 @@ def api_nodes():
 def api_states():
     conn = get_db()
     rows = conn.execute('''SELECT state, COUNT(*) cnt
-                           FROM stargate_leads
+                           FROM active_stargate_leads
                            WHERE state IS NOT NULL AND state != ""
                            GROUP BY state ORDER BY cnt DESC''').fetchall()
     conn.close()
@@ -247,7 +247,7 @@ Sitemap: https://stargatecapex.com/sitemap-static.xml
 def sitemap():
     """Sitemap index — lists all child company sitemaps."""
     conn = get_db()
-    total = conn.execute('SELECT COUNT(*) FROM stargate_leads').fetchone()[0]
+    total = conn.execute('SELECT COUNT(*) FROM active_stargate_leads').fetchone()[0]
     conn.close()
     today = datetime.utcnow().strftime('%Y-%m-%d')
     import math
@@ -294,7 +294,7 @@ def sitemap_static():
 
     # Fetch top cities from DB dynamically
     conn = get_db()
-    city_rows = conn.execute("SELECT city FROM stargate_leads WHERE city IS NOT NULL GROUP BY city ORDER BY COUNT(*) DESC LIMIT 200").fetchall()
+    city_rows = conn.execute("SELECT city FROM active_stargate_leads WHERE city IS NOT NULL GROUP BY city ORDER BY COUNT(*) DESC LIMIT 200").fetchall()
     conn.close()
     
     dynamic_city_slugs = []
@@ -366,7 +366,7 @@ def sitemap_child(page):
     offset = (page - 1) * per_page
     conn = get_db()
     rows = conn.execute(
-        'SELECT company_name, city, state FROM stargate_leads ORDER BY propensity_score DESC LIMIT ? OFFSET ?',
+        'SELECT company_name, city, state FROM active_stargate_leads ORDER BY propensity_score DESC LIMIT ? OFFSET ?',
         (per_page, offset)
     ).fetchall()
     conn.close()
@@ -402,9 +402,9 @@ def llms_txt():
         SUM(CASE WHEN propensity_score>=85 THEN 1 ELSE 0 END) priority,
         SUM(CASE WHEN lien_type="equipment" THEN 1 ELSE 0 END) equipment,
         SUM(CASE WHEN lien_type="blanket" THEN 1 ELSE 0 END) mca
-        FROM stargate_leads''').fetchone()
+        FROM active_stargate_leads''').fetchone()
     top = conn.execute(
-        "SELECT company_name, city, state, nearest_node, propensity_score, lien_type FROM stargate_leads ORDER BY propensity_score DESC LIMIT 20"
+        "SELECT company_name, city, state, nearest_node, propensity_score, lien_type FROM active_stargate_leads ORDER BY propensity_score DESC LIMIT 20"
     ).fetchall()
     conn.close()
 
@@ -479,11 +479,11 @@ def llms_full_txt():
         SUM(CASE WHEN propensity_score>=85 THEN 1 ELSE 0 END) priority,
         SUM(CASE WHEN lien_type="equipment" THEN 1 ELSE 0 END) equipment,
         SUM(CASE WHEN lien_type="blanket" THEN 1 ELSE 0 END) mca
-        FROM stargate_leads''').fetchone()
+        FROM active_stargate_leads''').fetchone()
     top = conn.execute(
         """SELECT company_name, city, state, nearest_node,
                   propensity_score, lien_type, secured_party, days_to_lapse
-           FROM stargate_leads ORDER BY propensity_score DESC LIMIT 100"""
+           FROM active_stargate_leads ORDER BY propensity_score DESC LIMIT 100"""
     ).fetchall()
     conn.close()
 
@@ -798,7 +798,7 @@ def state_page(state_slug):
     rows = conn.execute(
         '''SELECT company_name, city, state, secured_party, lien_type,
                   propensity_score, nearest_node, days_to_lapse, filing_date
-           FROM stargate_leads
+           FROM active_stargate_leads
            WHERE (UPPER(state) = ? OR UPPER(state) = ?)
            ORDER BY propensity_score DESC LIMIT 500''',
         (state_code.upper(), state_name.upper())
@@ -843,7 +843,7 @@ def node_page(node_slug):
     rows = conn.execute(
         '''SELECT company_name, city, state, secured_party, lien_type,
                   propensity_score, nearest_node, days_to_lapse, filing_date
-           FROM stargate_leads
+           FROM active_stargate_leads
            WHERE nearest_node = ?
            ORDER BY propensity_score DESC LIMIT 500''',
         (node_name,)
@@ -875,6 +875,9 @@ def leads_page():
     state = request.args.get('state', '')
     tier  = request.args.get('tier', '')
     search= request.args.get('search', '')
+    page  = max(1, int(request.args.get('page', 1)))
+    per_page = 100
+    offset = (page - 1) * per_page
 
     where = ['1=1']
     params = []
@@ -883,7 +886,6 @@ def leads_page():
     if tier == 'priority': where.append('propensity_score>=85')
     elif tier == 'hot':    where.append('propensity_score>=65')
     if search: where.append('LOWER(company_name) LIKE ?'); params.append(f'%{search.lower()}%')
-    params.append(500)
 
     conn = get_db()
     stats = conn.execute('''SELECT COUNT(*) total,
@@ -891,14 +893,14 @@ def leads_page():
         SUM(CASE WHEN propensity_score>=65 AND propensity_score<85 THEN 1 ELSE 0 END) hot,
         SUM(CASE WHEN lien_type="equipment" THEN 1 ELSE 0 END) equipment,
         SUM(CASE WHEN lien_type="blanket" THEN 1 ELSE 0 END) mca
-        FROM stargate_leads''').fetchone()
+        FROM active_stargate_leads''').fetchone()
     rows = conn.execute(
         f'''SELECT company_name, city, state, days_to_lapse, lapse_date, secured_party,
                    collateral, lien_type, nearest_node, node_dist_km, propensity_score,
                    stargate_match, phone, email, filing_date
-            FROM stargate_leads WHERE {" AND ".join(where)}
-            ORDER BY propensity_score DESC LIMIT ?''',
-        params
+            FROM active_stargate_leads WHERE {" AND ".join(where)}
+            ORDER BY propensity_score DESC LIMIT ? OFFSET ?''',
+        params + [per_page, offset]
     ).fetchall()
     conn.close()
 
@@ -938,6 +940,12 @@ def leads_page():
     equipment_str = f"{stats['equipment']:,}"
     mca_str       = f"{stats['mca']:,}"
     row_count_str = str(len(rows))
+    showing_start = str(offset + 1)
+    showing_end   = str(offset + len(rows))
+
+    prev_link = f'<a href="/leads?page={page-1}{"&node="+node if node else ""}{"&state="+state if state else ""}{"&tier="+tier if tier else ""}{"&search="+search if search else ""}" style="color:var(--cyan); margin-right:15px; text-decoration:none;">&larr; Previous Page</a>' if page > 1 else ''
+    next_link = f'<a href="/leads?page={page+1}{"&node="+node if node else ""}{"&state="+state if state else ""}{"&tier="+tier if tier else ""}{"&search="+search if search else ""}" style="color:var(--cyan); text-decoration:none;">Next Page &rarr;</a>' if len(rows) == per_page else ''
+    pagination_html = f'<div class="pagination" style="margin: 20px 0; font-family:\'D-DIN\', sans-serif; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px;">{prev_link} {next_link}</div>'
 
     json_ld = json.dumps({
         "@context": "https://schema.org",
@@ -956,7 +964,7 @@ def leads_page():
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Stargate Capex Company Database — {row_count_str} UCC Companies | stargatecapex.com</title>
+  <title>Stargate Capex Company Database — Companies {showing_start} to {showing_end} | stargatecapex.com</title>
   <meta name="description" content="Browse {total_str} UCC-1 equipment financing and MCA companies for the $500B Project Stargate AI data center buildout. Contractors, fabricators, and power vendors near Abilene TX, Columbus OH, Albuquerque NM." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://stargatecapex.com/leads" />
@@ -1009,7 +1017,7 @@ def leads_page():
     <a href="/leads?state=CO">Colorado</a>
   </div>
 
-  <p>Showing top {row_count_str} companies sorted by propensity score</p>
+  <p>Showing companies {showing_start} to {showing_end} sorted by propensity score</p>
 
   <table>
     <thead><tr>
@@ -1019,6 +1027,8 @@ def leads_page():
     </tr></thead>
     <tbody>{rows_html}</tbody>
   </table>
+
+  {pagination_html}
 
   <footer>
     <p>Stargate Capex — UCC-1 Company Intelligence Terminal — <a href="https://stargatecapex.com">stargatecapex.com</a></p>
@@ -1034,8 +1044,7 @@ def leads_page():
 @app.route('/companies/city/<city_slug>')
 def city_page(city_slug):
     """SEO landing page for Stargate companies by city."""
-    conn = sqlite3.connect(DB)
-    conn.row_factory = sqlite3.Row
+    conn = get_db()
     
     if city_slug in CITY_MAP:
         city_name, state_name, db_variants, page_intro = CITY_MAP[city_slug]
@@ -1043,7 +1052,7 @@ def city_page(city_slug):
         rows = conn.execute(
             f'''SELECT id, company_name, city, state, lien_type, filing_date, lapse_date,
                        days_to_lapse, secured_party, propensity_score, collateral
-               FROM stargate_leads
+               FROM active_stargate_leads
                WHERE city IN ({placeholders})
                ORDER BY propensity_score DESC LIMIT 500''',
             db_variants
@@ -1051,7 +1060,7 @@ def city_page(city_slug):
         conn.close()
     else:
         lead_ref = conn.execute(
-            'SELECT city, state FROM stargate_leads WHERE replace(lower(city), " ", "-") = ? LIMIT 1',
+            'SELECT city, state FROM active_stargate_leads WHERE replace(lower(city), " ", "-") = ? LIMIT 1',
             (city_slug,)
         ).fetchone()
         
@@ -1073,7 +1082,7 @@ def city_page(city_slug):
         rows = conn.execute(
             f'''SELECT id, company_name, city, state, lien_type, filing_date, lapse_date,
                        days_to_lapse, secured_party, propensity_score, collateral
-               FROM stargate_leads
+               FROM active_stargate_leads
                WHERE city IN ({placeholders})
                ORDER BY propensity_score DESC LIMIT 500''',
             db_variants
@@ -1307,6 +1316,49 @@ def blog_post(slug):
         faq_data=faq_data)
 
 
+
+
+@app.route('/about')
+def about_page():
+    content = """
+    <p>Stargate CapEx is a high-performance business intelligence terminal built specifically for alternative lenders, B2B sales development teams, and commercial finance brokers targeting the $500 billion Project Stargate artificial intelligence compute corridor.</p>
+    <h2>Our Mission</h2>
+    <p>The scale of the AI infrastructure buildout is unprecedented. Massive compute campuses consume gigawatts of power, miles of dark fiber, and thousands of high-end cooling systems. Stargate CapEx monitors Secretary of State UCC-1 filing feeds to identify active contractors, equipment operators, and logistics partners operating near these Stargate nodes whose equipment liens are maturing.</p>
+    <h2>Project Stargate Nodes Covered</h2>
+    <ul>
+      <li><strong>Abilene Campus</strong> — Abilene, Texas</li>
+      <li><strong>The Barn (Saline)</strong> — Saline, Michigan</li>
+      <li><strong>Lighthouse</strong> — Port Washington, Wisconsin</li>
+      <li><strong>Columbus Campus</strong> — Columbus, Ohio</li>
+      <li><strong>ABQ Campus</strong> — Albuquerque, New Mexico</li>
+    </ul>
+    """
+    return render_template('info.html',
+        page_title='About Stargate CapEx',
+        page_desc='About the Stargate CapEx intelligence terminal and UCC-1 company directory.',
+        canonical='https://stargatecapex.com/about',
+        page_heading='About Stargate CapEx',
+        page_content=content)
+
+
+@app.route('/services')
+def services_page():
+    content = """
+    <p>Stargate CapEx provides structured data, outbound pipeline building, and signal tracking tools for equipment finance brokers and B2B vendors.</p>
+    <h2>What We Offer</h2>
+    <h2>1. Outbound Prospecting Leads</h2>
+    <p>Get real-time alerts when a supplier or contractor near a Project Stargate campus files a new UCC-1 statement or has one nearing maturity. Filter by state, proximity, or custom category.</p>
+    <h2>2. Refinance Propensity Scoring</h2>
+    <p>Every lead is scored (from 0 to 100) using our proprietary Stargate CapEx matching engine. We rank leads based on the type of equipment financed (equipment liens vs. blanket liens), node distance, and days-to-lapse urgency.</p>
+    <h2>3. Custom API Access</h2>
+    <p>Access our lead intelligence platform programmatically. Build custom integrations with your CRM or outbound sales automation platforms.</p>
+    """
+    return render_template('info.html',
+        page_title='Services & Data Solutions',
+        page_desc='Structured UCC-1 data feeds, propensity scoring, and lead alerts for B2B reps.',
+        canonical='https://stargatecapex.com/services',
+        page_heading='Services & Data Solutions',
+        page_content=content)
 
 
 @app.route("/favicon.ico")

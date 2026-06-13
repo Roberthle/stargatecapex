@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ page_title }} | Stargate CapEx</title>
+  <meta name="description" content="{{ page_desc }}" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="{{ canonical }}" />
+  <link rel="stylesheet" href="/css/terminal_v2.css" />
+  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin />
+  <link href="https://fonts.cdnfonts.com/css/d-din" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cyan: #00e5ff;
+      --cyan-dim: rgba(0, 229, 255, 0.4);
+      --gold: #ffd700;
+    }
+    
+    body {
+      background-color: #080c14;
+      color: rgba(255, 255, 255, 0.85);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .info-container {
+      max-width: 800px;
+      margin: 120px auto 60px auto;
+      padding: 0 24px;
+      flex-grow: 1;
+    }
+    
+    .info-card {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      padding: 40px;
+      margin-bottom: 40px;
+    }
+    
+    .info-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    
+    .info-title {
+      font-family: 'D-DIN', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 0 0 12px 0;
+    }
+    
+    .info-content {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .info-content h2 {
+      font-family: 'D-DIN', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+    
+    .info-content p {
+      margin-bottom: 20px;
+    }
+    
+    .info-content ul {
+      margin-bottom: 24px;
+      padding-left: 20px;
+    }
+    
+    .info-content li {
+      margin-bottom: 10px;
+    }
+    
+    .info-content strong {
+      color: #ffffff;
+    }
+    
+    .info-content a {
+      color: var(--cyan);
+      text-decoration: none;
+      border-bottom: 1px dashed var(--cyan-dim);
+    }
+    
+    .info-content a:hover {
+      color: #ffffff;
+      border-bottom-style: solid;
+    }
+    
+    .cta-card {
+      background: linear-gradient(135deg, #05161d 0%, #082936 100%);
+      border: 1px solid var(--cyan-dim);
+      border-radius: 4px;
+      padding: 30px;
+      text-align: center;
+      margin-top: 40px;
+    }
+    
+    .cta-title {
+      font-family: 'D-DIN', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin: 0 0 8px 0;
+    }
+    
+    .cta-desc {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.65);
+      line-height: 1.5;
+      margin: 0 0 20px 0;
+    }
+    
+    .cta-btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: var(--cyan);
+      color: #080c14;
+      font-family: 'D-DIN', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      letter-spacing: 1.5px;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+      transition: all 0.2s;
+    }
+    
+    .cta-btn:hover {
+      background: #ffffff;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+    
+    @media (max-width: 768px) {
+      .info-container {
+        margin-top: 80px;
+      }
+      .info-card {
+        padding: 24px;
+      }
+      .info-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+  <link rel="icon" type="image/png" href="/apple-touch-icon.png?v=6">
+  <link rel="shortcut icon" href="/favicon.ico?v=6" type="image/x-icon">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="sg-nav" id="main-nav" role="navigation" aria-label="Main navigation">
+    <a class="sg-logo" href="/" id="logo-link" aria-label="Stargate Capex Terminal">
+      <div class="sg-logo-mark"></div>
+      <span class="sg-logo-text">STARGATE</span>
+      <span class="sg-logo-divider"></span>
+      <span class="sg-logo-capex">CAPEX</span>
+    </a>
+    <div class="sg-nav-right">
+      <div style="display:flex; gap:16px; align-items:center; margin-right:20px;">
+        <a href="/" style="font-family:'D-DIN',sans-serif; font-size:11px; font-weight:700; color:rgba(255,255,255,0.7); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Home</a>
+        <a href="/blog" style="font-family:'D-DIN',sans-serif; font-size:11px; font-weight:700; color:rgba(255,255,255,0.7); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Blog</a>
+      </div>
+      <div class="sg-live" aria-live="polite">
+        <div class="sg-live-dot" id="nav-live-dot"></div>
+        <span>Live Data</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="info-container">
+    <main class="info-card">
+      <div class="info-header">
+        <h1 class="info-title">{{ page_heading }}</h1>
+      </div>
+      <div class="info-content">
+        {{ page_content|safe }}
+      </div>
+      
+      <div class="cta-card">
+        <h3 class="cta-title">Open Capex Terminal</h3>
+        <p class="cta-desc">
+          Search the commercial credit ledger and find active equipment financing leads near Project Stargate campuses.
+        </p>
+        <a href="/" class="cta-btn">Open Terminal →</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="sg-footer" role="contentinfo">
+    <div class="sg-footer-note">
+      &copy; 2026 Stargate CapEx Intelligence Terminal. Public UCC-1 company directory.<br />
+      Our Network: <a href="https://tomcatregistry.com" style="color:var(--cyan); text-decoration:none;">Tomcat Registry</a> &nbsp;·&nbsp; <a href="https://www.spacexcapex.com" style="color:var(--cyan); text-decoration:none;">SpaceX CapEx</a>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+        let sessionId = sessionStorage.getItem("tomcat_visitor_session_id");
+        if (!sessionId) {
+            sessionId = "session_" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            sessionStorage.setItem("tomcat_visitor_session_id", sessionId);
+        }
+        const visitData = {
+            session_id: sessionId,
+            path: window.location.pathname,
+            referrer: document.referrer || "",
+            site: window.location.hostname || "unknown"
+        };
+        let visitId = null;
+        let lastPingTime = Date.now();
+        fetch("https://tomcatregistry.com/api/analytics/visit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(visitData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.visit_id) {
+                visitId = data.visit_id;
+                sessionStorage.setItem("tomcat_last_visit_id", visitId);
+            }
+        })
+        .catch(err => console.error("Analytics error:", err));
+        setInterval(() => {
+            if (!visitId) { visitId = sessionStorage.getItem("tomcat_last_visit_id"); }
+            if (visitId) {
+                const now = Date.now();
+                const delta = Math.round((now - lastPingTime) / 1000);
+                if (delta > 0) {
+                    lastPingTime = now;
+                    fetch("https://tomcatregistry.com/api/analytics/ping", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ visit_id: visitId, duration: delta })
+                    }).catch(() => {});
+                }
+            }
+        }, 15000);
+        function sendFinalPing() {
+            if (!visitId) return;
+            const delta = Math.round((Date.now() - lastPingTime) / 1000);
+            if (delta > 0) {
+                navigator.sendBeacon("https://tomcatregistry.com/api/analytics/ping", new Blob([JSON.stringify({ visit_id: visitId, duration: delta })], { type: "application/json" }));
+            }
+        }
+        window.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") sendFinalPing(); });
+        window.addEventListener("pagehide", sendFinalPing);
+    })();
+  </script>
+
+</body>
+</html>
