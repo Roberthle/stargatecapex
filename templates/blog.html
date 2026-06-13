@@ -462,5 +462,61 @@
       ts.textContent = new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC';
     }
   </script>
+
+<script>
+(function() {
+    let sessionId = sessionStorage.getItem("tomcat_visitor_session_id");
+    if (!sessionId) {
+        sessionId = "session_" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        sessionStorage.setItem("tomcat_visitor_session_id", sessionId);
+    }
+    const visitData = {
+        session_id: sessionId,
+        path: window.location.pathname,
+        referrer: document.referrer || "",
+        site: window.location.hostname || "unknown"
+    };
+    let visitId = null;
+    let lastPingTime = Date.now();
+    fetch("https://tomcatregistry.com/api/analytics/visit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(visitData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.visit_id) {
+            visitId = data.visit_id;
+            sessionStorage.setItem("tomcat_last_visit_id", visitId);
+        }
+    })
+    .catch(err => console.error("Analytics error:", err));
+    setInterval(() => {
+        if (!visitId) { visitId = sessionStorage.getItem("tomcat_last_visit_id"); }
+        if (visitId) {
+            const now = Date.now();
+            const delta = Math.round((now - lastPingTime) / 1000);
+            if (delta > 0) {
+                lastPingTime = now;
+                fetch("https://tomcatregistry.com/api/analytics/ping", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ visit_id: visitId, duration: delta })
+                }).catch(() => {});
+            }
+        }
+    }, 15000);
+    function sendFinalPing() {
+        if (!visitId) return;
+        const delta = Math.round((Date.now() - lastPingTime) / 1000);
+        if (delta > 0) {
+            navigator.sendBeacon("https://tomcatregistry.com/api/analytics/ping", new Blob([JSON.stringify({ visit_id: visitId, duration: delta })], { type: "application/json" }));
+        }
+    }
+    window.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") sendFinalPing(); });
+    window.addEventListener("pagehide", sendFinalPing);
+})();
+</script>
+
 </body>
 </html>
