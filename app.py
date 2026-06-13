@@ -461,7 +461,9 @@ Tracks contractors and suppliers active near Project Stargate construction sites
 
 site: https://stargatecapex.com
 """
-    resp = Response(txt, mimetype='text/plain')
+    body = txt.encode('utf-8')
+    resp = Response(body, mimetype='text/plain')
+    resp.headers['Content-Length'] = str(len(body))
     resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     resp.headers['Pragma'] = 'no-cache'
     return resp
@@ -522,7 +524,9 @@ def llms_full_txt():
 
 site: https://stargatecapex.com
 """
-    resp = Response(txt, mimetype='text/plain')
+    body = txt.encode('utf-8')
+    resp = Response(body, mimetype='text/plain')
+    resp.headers['Content-Length'] = str(len(body))
     resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     resp.headers['Pragma'] = 'no-cache'
     return resp
